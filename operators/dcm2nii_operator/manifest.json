@@ -1,0 +1,7 @@
+{
+  "model_description": "DICOM to NIfTI converter",
+  "predicate": "",
+  "mode": "QA",
+  "model_name": "dcm2nii-operator",
+  "model_version": "1.0.0"
+}

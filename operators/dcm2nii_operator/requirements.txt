@@ -1,0 +1,3 @@
+aide-sdk==1.0.3
+numpy
+reportlab
