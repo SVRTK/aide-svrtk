@@ -38,7 +38,10 @@ RUN wget https://gin.g-node.org/SVRTK/fetal_mri_network_weights/raw/master/check
 # Install Python packages
 RUN python -m pip install -r /home/Segmentation_FetalMRI/requirements.txt
 
-#COPY main.py main.py
+COPY docker-recon-brain-auto.bash /home/scripts/docker-recon-brain-auto.bash
+RUN mkdir -p /home/recon
+RUN chmod +x /home/scripts/*
+
 #COPY application.py application.py
 #COPY manifest.json manifest.json
 #
