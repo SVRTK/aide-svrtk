@@ -16,7 +16,7 @@ RUN apt-get install -y \
 	libtbb-dev \
 	libfltk1.3-dev
 
-## Install MIRTK/SVRTK
+# Install MIRTK/SVRTK
 RUN git clone https://github.com/SVRTK/MIRTK.git
 RUN mkdir -p /home/MIRTK/Packages/SVRTK
 RUN git clone https://github.com/SVRTK/SVRTK.git /home/MIRTK/Packages/SVRTK
@@ -27,13 +27,17 @@ RUN mkdir -p /home/MIRTK/build \
 
 ENV PATH="$PATH:/home/MIRTK/build/bin:/home/MIRTK/build/lib/tools"
 
-## Setup 3D UNet models
-RUN git clone https://github.com/SVRTK/Segmentation_FetalMRI.git /home/Segmentation_FetalMRI
-RUN git checkout -b dev 76f8fb9f8d4503943c98bb43f8bb3e6f122b2926
+# Setup 3D UNet models
+RUN git clone https://github.com/SVRTK/Segmentation_FetalMRI.git --branch svrtk-docker-gpu-0.10 --single-branch /home/Segmentation_FetalMRI
 
-#COPY requirements.txt requirements.txt
-#RUN pip install -r requirements.txt
-#
+RUN wget https://gin.g-node.org/SVRTK/fetal_mri_network_weights/raw/master/checkpoints-brain-loc-2-labels/latest.ckpt -P /home/Segmentation_FetalMRI/trained-models/checkpoints-brain-loc-labels
+RUN wget https://gin.g-node.org/SVRTK/fetal_mri_network_weights/raw/master/checkpoints-brain-loc-2-labels-cropped/latest.ckpt -P /home/Segmentation_FetalMRI/trained-models/checkpoints-brain-loc-labels-cropped
+RUN wget https://gin.g-node.org/SVRTK/fetal_mri_network_weights/raw/master/checkpoints-brain-reo-5-labels/latest.ckpt -P /home/Segmentation_FetalMRI/trained-models/checkpoints-brain-reorientation
+RUN wget https://gin.g-node.org/SVRTK/fetal_mri_network_weights/raw/master/checkpoints-brain-reo-5-labels-raw-stacks/latest.ckpt -P /home/Segmentation_FetalMRI/trained-models/checkpoints-brain-reorientation-stacks
+
+# Install Python packages
+RUN python -m pip install -r /home/Segmentation_FetalMRI/requirements.txt
+
 #COPY main.py main.py
 #COPY application.py application.py
 #COPY manifest.json manifest.json
