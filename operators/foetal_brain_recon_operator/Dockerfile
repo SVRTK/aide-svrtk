@@ -42,6 +42,8 @@ COPY docker-recon-brain-auto.bash /home/scripts/docker-recon-brain-auto.bash
 RUN mkdir -p /home/recon
 RUN chmod +x /home/scripts/*
 
+## AIDE SDK files
+#COPY main.py main.py
 #COPY application.py application.py
 #COPY manifest.json manifest.json
 #
