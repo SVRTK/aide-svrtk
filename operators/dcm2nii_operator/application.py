@@ -1,4 +1,4 @@
-import subprocess
+import os, glob, subprocess
 
 from aide_sdk.inference.aideoperator import AideOperator
 from aide_sdk.model.operatorcontext import OperatorContext
@@ -13,10 +13,15 @@ class Dcm2Nii(AideOperator):
         dicom_study = context.origin
 
         dcm_path = dicom_study.file_path  # basically dcm_path should = /mnt/aide_data/DICOM
-        output_dir = ''                      # output directory in container (e.g: /mnt/nifti_data ?)
+        nii_path = ''                     # output nii directory in container - conventionally, we use: /home/recon/
 
-        subprocess.run(["dcm2niix", "-z", "y", "-o", output_dir, "-f", "%t_%v_%s_%p", dcm_path])
+        subprocess.run(["dcm2niix", "-z", "y", "-o", nii_path, "-f", "stack-%s", dcm_path])
 
-        result_nii = Resource(format="nifti", content_type="result_nii", file_path=output_dir)
+        # Delete superfluous .json files
+        json_files = glob.glob(nii_path + "/*.json")
+        for json_file in json_files:
+            os.remove(json_file)
+
+        result_nii = Resource(format="nifti", content_type="result_nii", file_path=nii_path)
         context.add_resource(result_nii)
         return context
