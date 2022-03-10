@@ -1,3 +1,4 @@
+import os
 import subprocess
 
 from aide_sdk.inference.aideoperator import AideOperator
@@ -11,18 +12,15 @@ class FoetalBrainReconstructor(AideOperator):
     def process(self, context: OperatorContext):
         file_manager = FileStorage(context)
 
-        # same nii_path as previous operator
-        nii_path = ''
+        nii_stacks_resource = context.get_resources_by_type(format="nifti", content_type="nii_stacks")
+        nii_stacks_path = nii_stacks_resource.file_path     # Folder because added as folder in previous app
+        nii_3d_path = os.path.join(file_manager.mount_point, file_manager.write_location, 'nii_3d')
 
-        subprocess.run(["/home/scripts/docker-recon-brain-auto.bash", nii_path, "1", "-1"])
+        subprocess.run(["/home/scripts/docker-recon-brain-auto.bash", nii_stacks_path, "1", "-1"])
 
-        # At this point, nii_path will contain multiple files
-        # Important result file = SVR-output.nii.gz
-        # TBC – Either:
-        # 1) SVR-output.nii.gz needs to be passed to next operator
-        # OR:
-        # 2) We pass nii_path folder again to next operator so can access all files within.
+        # TODO:
+        # Adjust docker-recon-brain-auto.bash to put SVR-output.nii.gz in new directory (nii_3d_path)
 
-        result_nii = Resource(format="nifti", content_type="result_nii", file_path=nii_path)
-        context.add_resource(result_nii)
+        result_nii_3d = Resource(format="nifti", content_type="nii_3d", file_path=nii_3d_path)
+        context.add_resource(result_nii_3d)
         return context
