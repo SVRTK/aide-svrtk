@@ -294,7 +294,7 @@ def elem_initialise(uid_instance, uid_series_instance, uid_frame_of_reference, n
     return elements_to_define_meta, elements_to_transfer_meta, elements_to_define_ds, elements_to_transfer_ds, non_std_elements_to_define_ds
 
 
-def create_seq_stack():
+def create_seq_stack(ds):
     """
     Create stack SQ block
     """
@@ -330,6 +330,8 @@ def create_seq_stack():
     setattr(stack_code, 'MRStackPosteriorCoilPos', 0)
     setattr(stack_code, 'MRPhilipsX1', 0)
     stack_sequence.append(stack_code)
+
+    return ds
 
 
 def svr_nii2dcm(dcmInPath, niiInPath, dcmOutPath):
@@ -507,7 +509,7 @@ def svr_nii2dcm(dcmInPath, niiInPath, dcmOutPath):
         dcm_make_geometry_tags(ds, niiIn, iInstance + 1)
 
         # Add Stack Sequence to dataset
-        create_seq_stack()
+        create_seq_stack(ds)
 
         # create dicom
         ds.PresentationLUTShape = 'IDENTITY'
