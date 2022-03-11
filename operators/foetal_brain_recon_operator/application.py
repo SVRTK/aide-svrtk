@@ -18,9 +18,6 @@ class FoetalBrainReconstructor(AideOperator):
 
         subprocess.run(["/home/scripts/docker-recon-brain-auto.bash", nii_stacks_path, "1", "-1"])
 
-        # TODO:
-        # Adjust docker-recon-brain-auto.bash to put SVR-output.nii.gz in new directory (nii_3d_path)
-
         result_nii_3d = Resource(format="nifti", content_type="nii_3d", file_path=nii_3d_path)
         context.add_resource(result_nii_3d)
         return context
