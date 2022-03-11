@@ -294,7 +294,7 @@ def elem_initialise(uid_instance, uid_series_instance, uid_frame_of_reference, n
     return elements_to_define_meta, elements_to_transfer_meta, elements_to_define_ds, elements_to_transfer_ds, non_std_elements_to_define_ds
 
 
-def create_seq_stack(ds):
+def create_seq_stack(ds, nii_parameters):
     """
     Create stack SQ block
     """
@@ -509,12 +509,12 @@ def svr_nii2dcm(dcmInPath, niiInPath, dcmOutPath):
         dcm_make_geometry_tags(ds, niiIn, iInstance + 1)
 
         # Add Stack Sequence to dataset
-        create_seq_stack(ds)
+        create_seq_stack(ds, nii_parameters)
 
         # create dicom
         ds.PresentationLUTShape = 'IDENTITY'
         ds.PixelData = nii_img[:, :, iInstance].tobytes()
-        # ds.save_as(os.path.join(dcmOutPath, r'IM_%04d' % (iFileCtr)), write_like_original=False)
+        ds.save_as(os.path.join(dcmOutPath, r'IM_%04d' % (iFileCtr)), write_like_original=False)
         # file_manager # use dicom writer here
         iFileCtr = iFileCtr + 1
 
