@@ -1,6 +1,6 @@
 {
   "model_description": "DICOM to NIfTI converter",
-  "predicate": "",
+  "predicate": DICOM_MRAcquisitionType == "2D" AND DICOM_Modality == "MR" AND DICOM_AcquisitionContrast == "T2",
   "mode": "QA",
   "model_name": "dcm2nii-operator",
   "model_version": "1.0.0"
