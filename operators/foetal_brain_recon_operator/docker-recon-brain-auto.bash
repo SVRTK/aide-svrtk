@@ -34,6 +34,9 @@ cd ${default_recon_dir}
 ###### DEFAULT PARAMETERS AND PATHS
 ##########################################################################################################################
 
+# SVR output path for AIDE
+output_path=/home/output
+
 # software and network weight paths
 mirtk_path=/home/MIRTK/build/bin
 segm_path=/home/Segmentation_FetalMRI
@@ -475,7 +478,9 @@ if [[ -f ${test_file} ]];then
     cp ${main_dir}/${roi_recon[${selected_recon_roi}]}-output-withoutReorientation.nii.gz ${default_recon_dir}/${roi_recon[${selected_recon_roi}]}-output-withoutReorientation.nii.gz
     cp ${main_dir}/${roi_recon[${selected_recon_roi}]}-output.nii.gz ${default_recon_dir}/${roi_recon[${selected_recon_roi}]}-output.nii.gz
 
-    echo "Reconstruction was successful: " ${default_recon_dir}/${roi_recon[${selected_recon_roi}]}-output.nii.gz
+    cp ${main_dir}/${roi_recon[${selected_recon_roi}]}-output.nii.gz ${output_path}/${roi_recon[${selected_recon_roi}]}-output.nii.gz
+
+    echo "Reconstruction was successful: " ${output_path}/${roi_recon[${selected_recon_roi}]}-output.nii.gz
 
 else
     echo "Reconstruction failed ... "

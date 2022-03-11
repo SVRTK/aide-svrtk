@@ -40,6 +40,7 @@ RUN python -m pip install -r /home/Segmentation_FetalMRI/requirements.txt
 
 COPY docker-recon-brain-auto.bash /home/scripts/docker-recon-brain-auto.bash
 RUN mkdir -p /home/recon
+RUN mkdir -p /home/output
 RUN chmod +x /home/scripts/*
 
 # AIDE SDK files
