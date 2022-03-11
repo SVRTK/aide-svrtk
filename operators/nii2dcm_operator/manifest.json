@@ -1,7 +1,7 @@
 {
   "model_description": "3D SVR NIfTI to 3D single-frame DICOM converter",
-  "predicate": resource.type == "nii_3d",
+  "predicate": "resource.type == 'nii_3d'",
   "mode": "QA",
   "model_name": "nii2dcm-operator",
-  "model_version": "1.0.0"
+  "model_version": "0.1.0"
 }
