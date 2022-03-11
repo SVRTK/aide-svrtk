@@ -523,8 +523,8 @@ def svr_nii2dcm(dcmInPath, niiInPath, dcmOutPath):
     print('Output directory:', os.path.join(dcmOutPath))
 
 
-dcm_stack1_path = r"/home/troberts/code/aide-svrtk/test_env/dcm_stacks/DICOM/IM_0001"
-nii_3d_path = r"/home/troberts/code/aide-svrtk/test_env/nii_3d/SVR-output.nii.gz"
-dcm_3d_path = r"/home/troberts/code/aide-svrtk/test_env/dcm_3d/DICOM"
+dcm_stack1_path = r"/home/dcm_stacks/DICOM/IM_0001"
+nii_3d_path = r"/home/nii_3d/SVR-output.nii.gz"
+dcm_3d_path = r"/home/dcm_3d/DICOM"
 
 svr_nii2dcm(dcm_stack1_path, nii_3d_path, dcm_3d_path)
