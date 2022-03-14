@@ -1,7 +1,7 @@
 {
-  "model_description": "Automated foetal brain 2D to 3D MRI reconstructor",
+  "model_description": "Automated fetal brain T2 MRI 2D to 3D reconstructor",
   "predicate": "resource.type == 'nii_stacks'",
   "mode": "QA",
-  "model_name": "foetal-brain-recon-operator",
+  "model_name": "fetal-brain-svrtk-recon-operator",
   "model_version": "0.1.0"
 }

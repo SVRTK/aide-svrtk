@@ -7,7 +7,7 @@ from aide_sdk.model.resource import Resource
 from aide_sdk.utils.file_storage import FileStorage
 
 
-class FoetalBrainReconstructor(AideOperator):
+class FetalBrainReconstructor(AideOperator):
 
     def process(self, context: OperatorContext):
         file_manager = FileStorage(context)

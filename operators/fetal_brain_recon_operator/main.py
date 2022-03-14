@@ -1,5 +1,5 @@
 from aide_sdk.application import AideApplication
-from application import FoetalBrainReconstructor
+from application import FetalBrainReconstructor
 
 if __name__ == "__main__":
-    AideApplication.start(operator=FoetalBrainReconstructor())
+    AideApplication.start(operator=FetalBrainReconstructor())
