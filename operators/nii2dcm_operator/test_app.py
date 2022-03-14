@@ -532,4 +532,7 @@ dcm_stack1_path = r"/home/dcm_stacks/DICOM/IM_0001"
 nii_3d_path = r"/home/nii_3d/SVR-output.nii.gz"
 dcm_3d_path = r"/home/dcm_3d/DICOM"
 
-svr_nii2dcm(dcm_stack1_path, nii_3d_path, dcm_3d_path)
+context = OperatorContext()
+file_manager = FileStorage(context)
+
+svr_nii2dcm(dcm_stack1_path, nii_3d_path, dcm_3d_path, file_manager)
