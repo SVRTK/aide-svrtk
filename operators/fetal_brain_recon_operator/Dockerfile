@@ -44,6 +44,9 @@ RUN mkdir -p /home/recon \
     && chmod +x /home/scripts/*
 
 # AIDE SDK files
+COPY requirements.txt requirements.txt
+RUN pip install -r requirements.txt
+
 COPY main.py main.py
 COPY application.py application.py
 COPY manifest.json manifest.json
