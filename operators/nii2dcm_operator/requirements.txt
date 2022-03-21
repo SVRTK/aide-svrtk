@@ -1,4 +1,4 @@
-aide-sdk==1.0.3
+aide-sdk==1.0.4
 numpy
 nibabel
 pydicom
