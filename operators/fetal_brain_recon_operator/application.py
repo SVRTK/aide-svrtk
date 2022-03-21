@@ -16,7 +16,7 @@ class FetalBrainReconstructor(AideOperator):
         nii_stacks_path = nii_stacks_resource.file_path     # Folder because added as folder in previous app
         nii_3d_path = os.path.join(file_manager.mount_point, file_manager.write_location, 'nii_3d')
 
-        subprocess.run(["/home/scripts/docker-recon-brain-auto.bash", nii_stacks_path, "1", "-1"])
+        subprocess.run(["/home/scripts/docker-recon-brain-auto.bash", nii_stacks_path, "-1", "-1"])
 
         result_nii_3d = Resource(format="nifti", content_type="nii_3d", file_path=nii_3d_path)
         context.add_resource(result_nii_3d)
