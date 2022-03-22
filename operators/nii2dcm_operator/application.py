@@ -25,6 +25,8 @@ class Nii2Dcm(AideOperator):
         nii_3d_path = os.path.join(nii_3d_resource.file_path, 'SVR-output.nii.gz')  # Think .file_path = folder?
 
         dcm_3d_path = os.path.join(file_manager.mount_point, file_manager.write_location, 'dcm_3d')
+        if not os.path.exists(dcm_3d_path):
+            os.makedirs(dcm_3d_path)
 
         # create 3D dicom
         # dcm_stack1_path = DICOM file
