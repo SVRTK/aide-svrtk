@@ -1,6 +1,6 @@
 {
   "model_description": "3D SVR NIfTI to 3D single-frame DICOM converter",
-  "predicate": "resource.type == 'nifti/nii_3d'",
+  "predicate": "resources.type == 'nifti/nii_3d'",
   "mode": "CU",
   "model_name": "nii2dcm-operator-fetal-brain",
   "model_version": "0.1.0"
