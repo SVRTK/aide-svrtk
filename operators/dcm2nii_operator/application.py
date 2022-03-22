@@ -17,6 +17,7 @@ class Dcm2Nii(AideOperator):
         dcm_path = dicom_study.file_path
         # dcm_path = r'/Users/tr17/code/aide-svrtk/test_env/dcm_2d_dir'
         nii_path = os.path.join(file_manager.mount_point, file_manager.write_location, 'nii_stacks')
+        os.mkdir(nii_path)
 
         subprocess.run(["dcm2niix", "-z", "y", "-o", nii_path, "-f", "stack-%s", dcm_path])
 
