@@ -13,7 +13,7 @@ class FetalBrainReconstructor(AideOperator):
         file_manager = FileStorage(context)
 
         nii_stacks_resource = context.get_resources_by_type(format="nifti", content_type="nii_stacks")
-        nii_stacks_path = [x.file_path for x in list(nii_stacks_resource)]  # get_resources_by_type outputs generator object so need to convert to list
+        nii_stacks_path = next(nii_stacks_resource).file_path  # nii_stacks_resource = generator object, so use next()
         nii_3d_path = os.path.join(file_manager.mount_point, file_manager.write_location, 'nii_3d')
 
         subprocess.run(["/home/scripts/docker-recon-brain-auto.bash", nii_stacks_path, "1", "-1"])
