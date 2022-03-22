@@ -19,7 +19,7 @@ class Nii2Dcm(AideOperator):
         file_manager = FileStorage(context)
 
         dicom_series1 = context.origin.series[0]
-        dcm_stack1_path = dicom_series1.folder_path
+        dcm_stack1_path = dicom_series1.images[0].image_path
 
         nii_3d_resource = next(context.get_resources_by_type(format='nifti', content_type='nii_3d'))
         nii_3d_path = os.path.join(nii_3d_resource.file_path, 'SVR-output.nii.gz')  # Think .file_path = folder?
