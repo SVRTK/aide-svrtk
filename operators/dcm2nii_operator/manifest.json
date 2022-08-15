@@ -2,6 +2,6 @@
   "model_description": "DICOM to NIfTI converter",
   "predicate": "DICOM_MRAcquisitionType == '2D' AND DICOM_Modality == 'MR' AND DICOM_AcquisitionContrast == 'T2'",
   "mode": "CU",
-  "model_name": "dcm2nii-operator-fetal-brain",
+  "model_name": "3d-fetal-brain-mri-dcm2nii-operator",
   "model_version": "0.1.0"
 }
