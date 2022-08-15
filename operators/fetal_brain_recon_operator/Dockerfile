@@ -2,6 +2,11 @@ FROM pytorch/pytorch:1.9.0-cuda11.1-cudnn8-devel
 
 WORKDIR /home
 
+# Nvidia GPG key error fix
+# See: https://github.com/NVIDIA/nvidia-docker/issues/1631
+RUN rm /etc/apt/sources.list.d/cuda.list
+RUN rm /etc/apt/sources.list.d/nvidia-ml.list
+
 # Install general libraries
 RUN apt-get update && apt-get install --no-install-recommends --no-install-suggests -y \
 	git wget curl unzip
