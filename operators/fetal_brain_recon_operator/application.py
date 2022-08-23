@@ -1,5 +1,7 @@
 import os
 import subprocess
+import glob
+import shutil
 
 from aide_sdk.inference.aideoperator import AideOperator
 from aide_sdk.model.operatorcontext import OperatorContext
@@ -18,7 +20,11 @@ class FetalBrainReconstructor(AideOperator):
         if not os.path.exists(nii_3d_path):
             os.makedirs(nii_3d_path)
 
-        subprocess.run(["/home/scripts/docker-recon-brain-auto.bash", nii_stacks_path, "-1", "-1"])
+        # copy nifti files output by previous operator for processing in nii_3d_path directory
+        for nii_stack_filename in glob.glob(nii_stacks_path + '/stack*.nii.gz'):
+            shutil.copy(nii_stack_filename, nii_3d_path)
+
+        subprocess.run(["/home/scripts/docker-recon-brain-auto.bash", nii_3d_path, "-1", "-1"])
 
         result_nii_3d = Resource(format="nifti", content_type="nii_3d", file_path=nii_3d_path)
         context.add_resource(result_nii_3d)
