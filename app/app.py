@@ -1,10 +1,10 @@
-# AI-drived 3D fetal brain MRI reconstruction with SVRTK – MONAI Application Package (MAP)
+# AI-derived 3D fetal brain MRI reconstruction with SVRTK – MONAI Application Package (MAP)
 #
 # Tom Roberts (tom.roberts@gstt.nhs.uk / t.roberts@kcl.ac.uk)
 
 import logging
 
-from simple_image_operator import SimpleImageOperator
+from rotate_image_operator import RotateImageOperator
 
 from monai.deploy.core import Application, resource
 from monai.deploy.core.domain import Image
@@ -31,18 +31,18 @@ class FetalMri3dBrainApp(Application):
 
         # Create the custom operator(s) as well as SDK built-in operator(s).
         study_loader_op = DICOMDataLoaderOperator()
-        series_selector_op = DICOMSeriesSelectorOperator(Sample_Rules_Text)
+        series_selector_op = DICOMSeriesSelectorOperator()
         series_to_vol_op = DICOMSeriesToVolumeOperator()
 
-        # Simple image operator
-        simple_image_op = SimpleImageOperator()
+        # Rotate image operator
+        rotate_image_op = RotateImageOperator()
 
         # Create operator processing pipeline
         self.add_flow(study_loader_op, series_selector_op, {"dicom_study_list": "dicom_study_list"})
         self.add_flow(
             series_selector_op, series_to_vol_op, {"study_selected_series_list": "study_selected_series_list"}
         )
-        self.add_flow(series_to_vol_op, simple_image_op, {"image": "image"})
+        self.add_flow(series_to_vol_op, rotate_image_op, {"image": "image"})
 
         logging.info(f"End {self.compose.__name__}")
 
