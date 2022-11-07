@@ -1,0 +1,83 @@
+{
+	"name": "fetal-mri-3d-brain",
+	"version": "1.0.0",
+	"description": "3D Fetal Brain MRI reconstruction",
+	"informatics_gateway": {
+		"ae_title": "MONAI-DEPLOY",
+		"data_origins": [
+			"ORTHANC"
+		],
+		"export_destinations": [
+			"ORTHANC"
+		]
+	},
+	"tasks": [
+		{
+			"id": "router",
+			"description": "Ensure series description contains CT",
+			"type": "router",
+			"task_destinations": [
+				{
+					"name": "fetal3dbrain",
+					"conditions": ["{{ context.dicom.series.any('0008','0060')}} == 'CT'"]
+				}
+			]
+		},
+		{
+			"id": "fetal3dbrain",
+			"description": "Execute 3D Fetal MRI Brain reconstruction MAP",
+			"type": "docker",
+			"args": {
+				"container_image": "simple_rotate_app:latest",
+				"server_url": "unix:///var/run/docker.sock",
+				"entrypoint": "/bin/bash,-c",
+				"command": "python3 -u /opt/monai/app/app.py",
+				"task_timeout_minutes": "5",
+				"temp_storage_container_path": "/var/lib/monai/",
+				"env_MONAI_INPUTPATH": "/var/monai/input/",
+				"env_MONAI_OUTPUTPATH": "/var/monai/output/",
+				"env_MONAI_MODELPATH": "/opt/monai/models/",
+				"env_MONAI_WORKDIR": "/var/monai/"
+			},
+			"artifacts": {
+				"input": [
+					{
+						"name": "env_MONAI_INPUTPATH",
+						"value": "{{ context.input.dicom }}"
+					}
+				],
+				"output": [
+					{
+						"name": "env_MONAI_OUTPUTPATH",
+						"mandatory": true
+					}
+				]
+			},
+			"task_destinations": [
+				{
+					"name": "export-fetal3dbrain"
+				}
+			]
+		},
+		{
+			"id": "export-fetal3dbrain",
+			"description": "Export 3D Fetal MRI Brain reconstruction",
+			"type": "export",
+			"export_destinations": [
+				{
+					"Name": "ORTHANC"
+				}
+			],
+			"artifacts": {
+				"input": [
+					{
+						"name": "export-data",
+						"value": "{{ context.executions.fetal3dbrain.artifacts.env_MONAI_OUTPUTPATH }}",
+						"mandatory": true
+					}
+				],
+				"output": []
+			}
+		}
+	]
+}
