@@ -1,15 +1,17 @@
 # DICOM to NIfTI conversion operator
-# TODO: use MONAI Image class – for now, use dcm2niix as way of testing third-party software and MAPs
 
+import glob
 import logging
-import os, glob, subprocess
+import os
+import subprocess
 
 import monai.deploy.core as md
-from monai.deploy.core import DataPath, ExecutionContext, Image, InputContext, IOType, Operator, OutputContext
+from monai.deploy.core import DataPath, ExecutionContext, InputContext, IOType, Operator, OutputContext
 
 
-@md.input("image", Image, IOType.DISK)
-@md.output("saved_images_folder", DataPath, IOType.DISK)
+@md.input("dicom_files", DataPath, IOType.DISK)
+@md.output("nifti_files", DataPath, IOType.DISK)
+@md.env(pip_packages=["pydicom >= 2.3.0", "highdicom >= 0.18.2"])
 class Dcm2NiiOperator(Operator):
     """
     DICOM to NIfTI Operator
@@ -19,18 +21,20 @@ class Dcm2NiiOperator(Operator):
 
         logging.info(f"Begin {self.compute.__name__}")
 
-        # TODO: add in access to input_folder
+        dcm_path = op_input.get("dicom_files").path
 
-        input_image = op_input.get("image")
-        if not input_image:
-            raise ValueError("Input image is not found.")
-        data_out = rotate(input_image._data, angle=180, preserve_range=True)
+        nii_path = os.path.join(dcm_path, 'nii_stacks')
+        if not os.path.exists(nii_path):
+            os.makedirs(nii_path)
+        op_output.set(DataPath(nii_path))
 
-        op_output_folder_path = op_output.get("saved_images_folder").path
-        op_output_folder_path.mkdir(parents=True, exist_ok=True)
-        print(f"Operator output folder path: {op_output_folder_path}")
+        # Run dcm2niix
+        subprocess.run(["dcm2niix", "-z", "y", "-o", nii_path, "-f", "stack-%s", dcm_path])
 
-        subprocess.run(["dcm2niix", "-z", "y", "-o", input_path, "-f", "stack-%s", op_output_folder_path])
+        # Delete superfluous .json files
+        json_files = glob.glob(nii_path + "/*.json")
+        for json_file in json_files:
+            os.remove(json_file)
 
         logging.info(f"Performed dcm2niix conversion inside {self.compute.__name__}")
 
