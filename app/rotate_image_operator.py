@@ -24,7 +24,7 @@ class RotateImageOperator(Operator):
         input_image = op_input.get("image")
         if not input_image:
             raise ValueError("Input image is not found.")
-        data_out = rotate(input_image._data, angle=180, preserve_range=True)
+        # data_out = rotate(input_image._data, angle=180, preserve_range=True)
 
         logging.info(f"Performed rotation inside {self.compute.__name__}")
 
@@ -32,7 +32,12 @@ class RotateImageOperator(Operator):
         op_output_folder_path.mkdir(parents=True, exist_ok=True)
         print(f"Operator output folder path: {op_output_folder_path}")
 
-        imsave(op_output_folder_path / "original_image.png", squeeze(input_image._data))
-        imsave(op_output_folder_path / "rotated_image.png", squeeze(data_out))
+        for idx, im in enumerate(input_image._data):
+            orig_im_str = "original_image_{}.png".format(idx)
+            imsave(op_output_folder_path / orig_im_str, squeeze(im))
+
+            data_out = rotate(im, angle=180, preserve_range=True)
+            rot_im_str = "rotated_image_{}.png".format(idx)
+            imsave(op_output_folder_path / rot_im_str, squeeze(data_out))
 
         logging.info(f"End {self.compute.__name__}")
