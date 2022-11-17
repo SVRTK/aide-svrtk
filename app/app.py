@@ -4,10 +4,10 @@
 
 import logging
 
-from rotate_image_operator import RotateImageOperator
-from dcm2nii_operator import Dcm2NiiOperator
-from dcmwriter_operator import DicomWriterOperator
-from fetal_mri_3d_brain_recon_operator import FetalMri3dBrainOperator
+from operators.rotate_image_operator import RotateImageOperator
+from operators.dcm2nii_operator import Dcm2NiiOperator
+from operators.dcmwriter_operator import DicomWriterOperator
+from operators.fetal_mri_3d_brain_recon_operator import FetalMri3dBrainOperator
 
 from monai.deploy.core import Application, resource
 from monai.deploy.core.domain import Image

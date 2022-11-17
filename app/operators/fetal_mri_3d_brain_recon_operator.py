@@ -39,8 +39,8 @@ class FetalMri3dBrainOperator(Operator):
         op_output_folder_path.mkdir(parents=True, exist_ok=True)
 
         # copy nifti files output by previous operator for processing in nii_3d_path directory
-        for nii_stack_filename in glob.glob(nii_stacks_path + '/stack*.nii.gz'):
-            shutil.copy(nii_stack_filename, nii_3d_path)
+        # for nii_stack_filename in glob.glob(nii_stacks_path + '/stack*.nii.gz'):
+        #     shutil.copy(nii_stack_filename, nii_3d_path)
 
         # Run 3D Fetal Brain MRI reconstruction
         # subprocess.run(["/home/scripts/docker-recon-brain-auto.bash", nii_3d_path, "-1", "-1"])
