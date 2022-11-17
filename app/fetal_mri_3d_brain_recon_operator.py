@@ -4,6 +4,7 @@ import glob
 import logging
 import os
 import subprocess
+import shutil
 
 import monai.deploy.core as md
 from monai.deploy.core import DataPath, ExecutionContext, InputContext, IOType, Operator, OutputContext
@@ -37,7 +38,14 @@ class FetalMri3dBrainOperator(Operator):
         op_output_folder_path = op_output.get().path
         op_output_folder_path.mkdir(parents=True, exist_ok=True)
 
-        # TODO: remove temporary code below - purely for testing
+        # copy nifti files output by previous operator for processing in nii_3d_path directory
+        for nii_stack_filename in glob.glob(nii_stacks_path + '/stack*.nii.gz'):
+            shutil.copy(nii_stack_filename, nii_3d_path)
+
+        # Run 3D Fetal Brain MRI reconstruction
+        # subprocess.run(["/home/scripts/docker-recon-brain-auto.bash", nii_3d_path, "-1", "-1"])
+
+        # TODO: remove temporary code below - purely for testing writing to output dir
         with open(os.path.join(op_output_folder_path, 'results.txt'), 'w') as f:
             f.write('Test: resultant file')
 
