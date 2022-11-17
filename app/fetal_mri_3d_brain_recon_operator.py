@@ -21,11 +21,23 @@ class FetalMri3dBrainOperator(Operator):
 
         logging.info(f"Begin {self.compute.__name__}")
 
-        input_path = op_input.get("nifti_files").path
+        nii_stacks_path = op_input.get("nifti_files").path
+
+        # TODO: improve path code below – very hacky as hard-coded based on:
+        #  /input
+        #   |- /nii_stacks
+        #   |- /nii_3d
+        input_dir = os.path.dirname(nii_stacks_path)
+
+        nii_3d_path = os.path.join(input_dir, "nii_3d")
+        if not os.path.exists(nii_3d_path):
+            os.makedirs(nii_3d_path)
+        # op_output.set(DataPath(nii_3d_path))
 
         op_output_folder_path = op_output.get().path
         op_output_folder_path.mkdir(parents=True, exist_ok=True)
 
+        # TODO: remove temporary code below - purely for testing
         with open(os.path.join(op_output_folder_path, 'results.txt'), 'w') as f:
             f.write('Test: resultant file')
 
