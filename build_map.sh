@@ -19,3 +19,7 @@ docker build -t fetalsvrtk/aide:map-test-extra app/
 
 # Test MAP-Extra with MONAI Deploy
 monai-deploy run fetalsvrtk/aide:map-test-extra input output
+
+# Optional: Test scripts within Docker container
+# - On DGX:
+docker run -it --rm -v /home/troberts/code/aide-svrtk/input/nii_stacks:/home/recon --entrypoint /bin/bash fetalsvrtk/aide:map-test-extra
