@@ -38,15 +38,21 @@ class FetalMri3dBrainOperator(Operator):
         op_output_folder_path = op_output.get().path
         op_output_folder_path.mkdir(parents=True, exist_ok=True)
 
-        # copy nifti files output by previous operator for processing in nii_3d_path directory
+        # Run 3D Fetal Brain MRI reconstruction
+        subprocess.run(["/home/scripts/docker-recon-brain-auto.bash", nii_stacks_path, "-1", "-1"])
+
+        # TODO: may need to copy output files in nii_stacks_path to nii_3d_path
+        # # copy nifti files output by previous operator for processing in nii_3d_path directory
         # for nii_stack_filename in glob.glob(nii_stacks_path + '/stack*.nii.gz'):
         #     shutil.copy(nii_stack_filename, nii_3d_path)
 
-        # Run 3D Fetal Brain MRI reconstruction
-        # subprocess.run(["/home/scripts/docker-recon-brain-auto.bash", nii_3d_path, "-1", "-1"])
-
         # TODO: remove temporary code below - purely for testing writing to output dir
+        #  - or add to logs
         with open(os.path.join(op_output_folder_path, 'results.txt'), 'w') as f:
-            f.write('Test: resultant file')
+            f.write('Testing paths:\n')
+            f.write(f'nii_stacks_path: {nii_stacks_path}\n')
+            f.write(f'input_dir: {input_dir}\n')
+            f.write(f'nii_3d_path: {nii_3d_path}\n')
+            f.write(f'op_output_folder_path: {op_output_folder_path}\n')
 
         logging.info(f"End {self.compute.__name__}")
