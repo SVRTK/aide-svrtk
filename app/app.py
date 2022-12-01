@@ -46,15 +46,17 @@ class FetalMri3dBrainApp(Application):
         # Fetal Brain 3D MRI reconstruction operator
         fetal_mri_3d_recon_op = FetalMri3dBrainOperator()
 
+        # DICOM Writer operator
+        custom_tags = {"SeriesDescription": "AI generated image, not for clinical use."}
+        dcmwriter_op = DicomWriterOperator(custom_tags=custom_tags)
+
         # TODO: figure out how to run SVRTK Docker container
         #  - Docker containers? Split across MAPs and Docker?
 
         # Fetal Brain 3D MRI reconstruction operator pipeline
-        self.add_flow(dcm2nii_op, fetal_mri_3d_recon_op, {"nifti_files": "nifti_files"})
+        self.add_flow(dcm2nii_op, fetal_mri_3d_recon_op, {"input_files": "input_files"})
+        self.add_flow(fetal_mri_3d_recon_op, dcmwriter_op, {"input_files": "input_files"})
 
-        # # DICOM Writer operator
-        # custom_tags = {"SeriesDescription": "AI generated image, not for clinical use."}
-        # dcmwriter_op = DicomWriterOperator(custom_tags=custom_tags)
 
         # # rotate_image operator pipeline
         # self.add_flow(study_loader_op, series_selector_op, {"dicom_study_list": "dicom_study_list"})
