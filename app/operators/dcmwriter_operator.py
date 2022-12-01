@@ -1,4 +1,4 @@
-# DICOM Writer operator
+# 3D Fetal MRI DICOM Writer operator
 
 import datetime
 import logging
