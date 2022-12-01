@@ -1,10 +1,8 @@
 # Perform Fetal MRI 3D Brain reconstruction
 
-import glob
 import logging
 import os
 import subprocess
-import shutil
 
 import monai.deploy.core as md
 from monai.deploy.core import DataPath, ExecutionContext, InputContext, IOType, Operator, OutputContext
@@ -41,11 +39,6 @@ class FetalMri3dBrainOperator(Operator):
         # Run 3D Fetal Brain MRI reconstruction
         # subprocess.run(["/home/scripts/docker-recon-brain-auto.bash", nii_path, "-1", "-1"])
         subprocess.run(["cp", "/Users/tr17/code/aide-svrtk/test_data/SVR-output.nii.gz", nii_path])
-
-        # TODO: may need to copy output files in nii_stacks_path to nii_3d_path
-        # copy nifti files output by previous operator for processing in nii_3d_path directory
-        # for nii_stack_filename in glob.glob(nii_stacks_path + '/stack*.nii.gz'):
-        #     shutil.copy(nii_stack_filename, nii_3d_path)
 
         # TODO: remove temporary code below - purely for testing writing to output dir
         #  - or add to logs
