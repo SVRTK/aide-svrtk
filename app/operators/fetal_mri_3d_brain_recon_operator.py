@@ -37,8 +37,7 @@ class FetalMri3dBrainOperator(Operator):
         op_output_folder_path.mkdir(parents=True, exist_ok=True)
 
         # Run 3D Fetal Brain MRI reconstruction
-        # subprocess.run(["/home/scripts/docker-recon-brain-auto.bash", nii_path, "-1", "-1"])
-        subprocess.run(["cp", "/Users/tr17/code/aide-svrtk/test_data/SVR-output.nii.gz", nii_path])
+        subprocess.run(["/home/scripts/docker-recon-brain-auto.bash", nii_path, "-1", "-1"])
 
         # TODO: remove temporary code below - purely for testing writing to output dir
         #  - or add to logs
