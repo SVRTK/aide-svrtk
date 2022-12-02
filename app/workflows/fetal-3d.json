@@ -28,7 +28,7 @@
 			"description": "Execute 3D Fetal MRI Brain reconstruction MAP",
 			"type": "docker",
 			"args": {
-				"container_image": "simple_rotate_app:latest",
+				"container_image": "fetalsvrtk/aide:map-test-extra",
 				"server_url": "unix:///var/run/docker.sock",
 				"entrypoint": "/bin/bash,-c",
 				"command": "python3 -u /opt/monai/app/app.py",
