@@ -1,0 +1,107 @@
+#
+#-----------------------------------------------------------------------------
+#
+# Installation instructions (tested on Debian/Ubuntu dockers) for automated SVRTK fetal
+# MRI reconstruction of the fetal thorax + reorientation for AID 11/2022
+#
+#-----------------------------------------------------------------------------
+#
+
+# note: THIS VARIABLE SHOULD CONTAIN THE LOCATION WHERE THE SOFTWARE SHOULD BE INSTALLED
+
+software_dir=!!!!!!!folder_for_installation_of the_software!!!!!!!
+
+
+#
+#-----------------------------------------------------------------------------
+# - install MIRTK+SVRTK ...
+#-----------------------------------------------------------------------------
+#
+
+#install libraries for SVRTK
+
+apt-get update
+apt install git cmake cmake-curses-gui python python3
+apt-get install build-essential libtbb-dev libboost-all-dev libeigen3-dev zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev wget libgl1-mesa-glx mesa-utils libglm-dev pip unzip
+
+cd ${software_dir}
+git clone https://github.com/SVRTK/MIRTK.git
+git clone https://github.com/SVRTK/SVRTK.git MIRTK/Packages/SVRTK
+
+#build MIRTK+SVRTK
+
+cd MIRTK/
+mkdir build
+cd build/
+cmake -D WITH_TBB="ON" -D MODULE_SVRTK="ON" ..
+make -j2
+
+
+#
+#-----------------------------------------------------------------------------
+# - install SVRTK segmentation module ...
+#-----------------------------------------------------------------------------
+#
+
+
+1) clone "auto-proc-svrtk" module (optimised for brain reconstruction) and network weights files into your ${software_dir} from: https://github.com/SVRTK/aide-svrtk
+
+
+2) wget monai network weights from: https://gin.g-node.org/SVRTK/fetal_mri_network_weights (all "monai-checkpoints-*" folders) into auto-proc-svrtk/trained_models 
+
+
+3)install Miniconda (if required)
+
+#wget  https://repo.anaconda.com/miniconda/Miniconda3-py39_4.12.0-Linux-aarch64.sh
+#bash Miniconda3-py39_4.12.0-Linux-aarch64.sh
+
+#wget  https://repo.anaconda.com/miniconda/Miniconda3-py39_4.12.0-Linux-x86_64.sh
+#bash Miniconda3-py39_4.12.0-Linux-x86_64.sh
+
+
+4) activate conda
+
+source ~/.bashrc
+
+
+5) install required CNN libraries
+
+conda install pytorch
+conda install torchvision
+pip install 'monai[all]'
+
+
+6) create environment
+
+cd auto-proc-svrtk
+conda env create -f Segmentation_FetalMRI_MONAI.yml
+
+#
+#-----------------------------------------------------------------------------
+# - manually update the recon script ...
+#-----------------------------------------------------------------------------
+#
+
+#PLEASE MANUALLY EDIT THE RECON (AND REO) SCRIPTS:  ${software_dir}/auto-proc-svrtk/auto-brain-reconstruction.sh
+# - update the software folder location
+# - update the location of the tmp folder for processing 
+#
+
+#
+#-----------------------------------------------------------------------------
+# - testing the recon scripts ...
+#-----------------------------------------------------------------------------
+#
+
+#"TRY RUNNING RECONSTRUCTION SCRIPT: "
+# note: please include only the stacks that include the brain (there are two options for running minor (0) and severe (1) motion - the minor motion is default)
+
+${software_dir}/auto-proc-svrtk/auto-brain-reconstruction.sh [full path to the folder with raw T2w stacks] [full path to the output results folder ] 0 2.5 0.8 1 
+
+#you can also run severe motion recon option ("1", but it works only for the stacks with full brain coverage (might fail for severely cropped stacks)), specify slice thickness, output resolution and number of packages
+
+${software_dir}/auto-proc-svrtk/auto-brain-reconstruction.sh [full path to the folder with raw T2w stacks] [full path to the output results folder ] 1 2.5 0.8 4 
+
+
+
+
