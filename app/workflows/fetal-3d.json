@@ -1,5 +1,5 @@
 {
-	"name": "fetal-mri-3d-brain",
+	"name": "fetal-brain",
 	"version": "1.0.0",
 	"description": "3D Fetal Brain MRI reconstruction",
 	"informatics_gateway": {
