@@ -44,7 +44,10 @@ make -j2
 #
 
 
-1) clone "auto-proc-svrtk" module (optimised for brain reconstruction) and network weights files into your ${software_dir} from: https://github.com/SVRTK/aide-svrtk
+1) clone "auto-proc-svrtk" module (optimised for brain reconstruction) and network weights files into your ${software_dir} from: 
+https://emckclac.sharepoint.com/:f:/r/sites/LSMfnmri/Shared%20Documents/software/transfer-to-monai-auto/auto-proc-svrtk?csf=1&web=1&e=BjXvZx
+
+(Could be added to https://github.com/SVRTK/aide-svrtk ? ) 
 
 
 2) wget monai network weights from: https://gin.g-node.org/SVRTK/fetal_mri_network_weights (all "monai-checkpoints-*" folders) into auto-proc-svrtk/trained_models 
