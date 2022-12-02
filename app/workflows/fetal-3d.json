@@ -14,12 +14,12 @@
 	"tasks": [
 		{
 			"id": "router",
-			"description": "Ensure series description contains CT",
+			"description": "Ensure series description contains MR",
 			"type": "router",
 			"task_destinations": [
 				{
 					"name": "fetal3dbrain",
-					"conditions": ["{{ context.dicom.series.any('0008','0060')}} == 'CT'"]
+					"conditions": ["{{ context.dicom.series.any('0008','0060')}} == 'MR'"]
 				}
 			]
 		},
