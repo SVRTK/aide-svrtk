@@ -1,0 +1,65 @@
+metadata:
+  name: fetal-brain-3d-recon-argo-template
+  generateName: fetal-brain-3d-recon-argo-template-
+  namespace: argo
+  uid: ddeb1884-f221-4310-ba00-af6b3ec1f7a1
+  resourceVersion: '5978853'
+  generation: 1
+  creationTimestamp: '2022-12-05T11:07:32Z'
+  labels:
+    workflows.argoproj.io/creator: system-serviceaccount-argo-argo-argo-workflows-server
+  managedFields:
+    - manager: argo
+      operation: Update
+      apiVersion: argoproj.io/v1alpha1
+      time: '2022-12-05T11:07:32Z'
+      fieldsType: FieldsV1
+      fieldsV1:
+        f:metadata:
+          f:generateName: {}
+          f:labels:
+            .: {}
+            f:workflows.argoproj.io/creator: {}
+        f:spec: {}
+spec:
+  templates:
+    - name: fetal-brain-3d-recon
+      inputs:
+        artifacts:
+          - name: input-dicom
+            path: /var/monai/input
+            s3:
+              accessKeySecret:
+                name: my-minio-cred
+                key: accesskey
+              secretKeySecret:
+                name: my-minio-cred
+                key: secretkey
+              key: argo/inputs/artifacts/input-dicom
+      outputs:
+        artifacts:
+          - name: output
+            path: /var/monai/output
+            s3:
+              bucket: bucket1
+              accessKeySecret:
+                name: my-minio-cred
+                key: accesskey
+              secretKeySecret:
+                name: my-minio-cred
+                key: secretkey
+              key: /var/monai/output
+      metadata: {}
+      container:
+        name: ''
+        image: fetalsvrtk/aide:map
+        command:
+          - /bin/bash
+          - '-c'
+        args:
+          - python3 -u /opt/monai/app/app.py
+        resources:
+          limits:
+            nvidia.com/gpu: '1'
+  entrypoint: fetal-brain-3d-recon
+  arguments: {}
