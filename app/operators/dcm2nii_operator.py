@@ -66,16 +66,17 @@ def parse_recursively_dcm_files(input_path):
     :return dcm_paths:
     """
 
-    if not 'dcm' in os.listdir(input_path):
-        print('dcm folder not found.')
-    else:
-        dcm_path = os.path.join(input_path, 'dcm')
+    logging.info(f"input_path: {os.getcwd()}")
+    logging.info(f"listdir(input_path): {os.listdir(input_path)}")
 
-    try:
-        study_dir = ''.join(os.listdir(dcm_path))
-        study_path = os.path.join(dcm_path, study_dir)
-    except:
-        print('Exception occurred with study_path')
+    for item in os.listdir(input_path):
+        item = os.path.join(input_path, item)
+        if os.path.isdir(item):
+            study_path = item
+        else:
+            NameError('Exception occurred with study_path')
+
+    logging.info(f"study_path: {study_path}")
 
     try:
         series_paths = []
@@ -85,6 +86,8 @@ def parse_recursively_dcm_files(input_path):
     except:
         print('Exception occurred with series_paths')
 
+    logging.info(f"series_paths: {series_paths}")
+
     dcm_files = []
     for sp in series_paths:
         series_files = os.listdir(sp)
@@ -93,5 +96,7 @@ def parse_recursively_dcm_files(input_path):
                 dcm_files.append(file)
 
     dcm_paths = [os.path.join(a, b) for a, b in zip(series_paths, dcm_files)]
+
+    logging.info(f"dcm_paths: {dcm_paths}")
 
     return dcm_paths
