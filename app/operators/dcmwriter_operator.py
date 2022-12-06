@@ -48,9 +48,11 @@ class DicomWriterOperator(Operator):
 
         dcm_ref_path = dcm_files[series_numbers_list_order[0]]
 
-        dcm_3d_path = os.path.join(op_output.get().path, 'DICOM')
-        if not os.path.exists(dcm_3d_path):
-            os.makedirs(dcm_3d_path)
+        dcm_3d_path = op_output.get().path
+        # For local testing:
+        # dcm_3d_path = os.path.join(op_output.get().path, 'DICOM')
+        # if not os.path.exists(dcm_3d_path):
+        #     os.makedirs(dcm_3d_path)
 
         # Create 3D SVR DICOM files
         # dcm_ref_path = 2D input stack DICOM file
