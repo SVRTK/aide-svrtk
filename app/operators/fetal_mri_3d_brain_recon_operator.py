@@ -22,10 +22,6 @@ class FetalMri3dBrainOperator(Operator):
 
         nii_path = op_input.get("input_files").path
 
-        # TODO: improve path code below – very hacky as hard-coded based on:
-        #  /input
-        #   |- /nii_stacks
-        #   |- /nii_3d
         input_dir = os.path.dirname(nii_path)
 
         # nii_3d_path = os.path.join(input_dir, "nii_3d")
@@ -38,14 +34,5 @@ class FetalMri3dBrainOperator(Operator):
 
         # Run 3D Fetal Brain MRI reconstruction
         subprocess.run(["/home/scripts/docker-recon-brain-auto.bash", nii_path, "-1", "-1"])
-
-        # TODO: remove temporary code below - purely for testing writing to output dir
-        #  - or add to logs
-        # with open(os.path.join(op_output_folder_path, 'results.txt'), 'w') as f:
-        #     f.write('Testing paths:\n')
-        #     f.write(f'nii_stacks_path: {nii_stacks_path}\n')
-        #     f.write(f'input_dir: {input_dir}\n')
-        #     f.write(f'nii_3d_path: {nii_3d_path}\n')
-        #     f.write(f'op_output_folder_path: {op_output_folder_path}\n')
 
         logging.info(f"End {self.compute.__name__}")
