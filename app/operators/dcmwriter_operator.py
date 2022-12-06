@@ -530,7 +530,7 @@ def svr_nii2dcm(dcmInPath, niiInPath, dcmOutPath):
         # create dicom
         ds.PresentationLUTShape = 'IDENTITY'
         ds.PixelData = nii_img[:, :, iInstance].tobytes()
-        ds.save_as(os.path.join(dcmOutPath, r'IM_%04d' % (iFileCtr)), write_like_original=False)
+        ds.save_as(os.path.join(dcmOutPath, r'IM_%04d.dcm' % (iFileCtr)), write_like_original=False)
 
         iFileCtr = iFileCtr + 1
 
