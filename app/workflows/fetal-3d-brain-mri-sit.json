@@ -37,7 +37,7 @@
         ],
         "output": [
           {
-            "name": "output-dicom",
+            "name": "output",
             "value": "",
             "mandatory": true
           }
@@ -59,7 +59,7 @@
       "artifacts": {
         "input": [
           {
-            "name": "output-dicom",
+            "name": "output",
             "value": "{{ context.executions.brain-3d-recon.artifacts.output }}",
             "mandatory": true
           }
