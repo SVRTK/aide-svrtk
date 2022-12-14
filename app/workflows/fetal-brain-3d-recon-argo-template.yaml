@@ -1,26 +1,6 @@
 metadata:
   name: fetal-brain-3d-recon-argo-template
   generateName: fetal-brain-3d-recon-argo-template-
-  namespace: argo
-  uid: ddeb1884-f221-4310-ba00-af6b3ec1f7a1
-  resourceVersion: '5978853'
-  generation: 1
-  creationTimestamp: '2022-12-05T11:07:32Z'
-  labels:
-    workflows.argoproj.io/creator: system-serviceaccount-argo-argo-argo-workflows-server
-  managedFields:
-    - manager: argo
-      operation: Update
-      apiVersion: argoproj.io/v1alpha1
-      time: '2022-12-05T11:07:32Z'
-      fieldsType: FieldsV1
-      fieldsV1:
-        f:metadata:
-          f:generateName: {}
-          f:labels:
-            .: {}
-            f:workflows.argoproj.io/creator: {}
-        f:spec: {}
 spec:
   templates:
     - name: fetal-brain-3d-recon
