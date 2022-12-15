@@ -24,6 +24,10 @@
         {
           "name": "export-3d-dicom",
           "conditions": []
+        },
+        {
+          "name": "clinical-review-task",
+          "conditions": []
         }
       ],
       "export_destinations": [],
@@ -44,6 +48,30 @@
         ]
       },
       "timeout_minutes": -1
+    },
+    {
+      "id": "clinical-review-task",
+      "description": "3D fetal brain MRI Clinical Review Task",
+      "type": "aide_clinical_review",
+      "args": {
+        "workflow_name": "fetal-brain-mri",
+        "reviewed_task_id": "brain-3d-recon",
+        "application_name": "fetal-brain-mri",
+        "application_version": "1.0.0",
+        "mode": "QA",
+        "reviewer_roles": "clinician"
+      },
+      "task_destinations": [
+      ],
+      "artifacts": {
+        "input": [
+          {
+            "name": "output",
+            "value": "",
+            "mandatory": true
+          }
+        ]
+      }
     },
     {
       "id": "export-3d-dicom",
