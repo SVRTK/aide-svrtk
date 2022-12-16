@@ -22,10 +22,6 @@
       },
       "task_destinations": [
         {
-          "name": "export-3d-dicom",
-          "conditions": []
-        },
-        {
           "name": "clinical-review-task",
           "conditions": []
         }
@@ -62,9 +58,20 @@
         "reviewer_roles": "clinician"
       },
       "task_destinations": [
+          {
+          "name": "export-3d-dicom",
+          "conditions": [
+            "{{ context.executions.clinical-review-task.result.Acceptance }} == 'True'"
+          ]
+        }
       ],
       "artifacts": {
         "input": [
+          {
+            "name": "input-dicom",
+            "value": "{{ context.input.dicom }}",
+            "mandatory": true
+          },
           {
             "name": "output",
             "value": "",
