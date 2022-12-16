@@ -1,0 +1,107 @@
+{
+  "name": "fetal-brain-mri",
+  "version": "1.0.0",
+  "description": "Clinical Workflow for 3D fetal brain MRI reconstruction",
+  "informatics_gateway": {
+    "ae_title": "MONAI",
+    "data_origins": [],
+    "export_destinations": [
+      "PACS"
+    ]
+  },
+  "tasks": [
+    {
+      "id": "brain-3d-recon",
+      "description": "3D fetal brain MRI reconstruction",
+      "type": "argo",
+      "args": {
+        "workflow_template_name": "fetal-brain-3d-recon-argo-template",
+        "server_url": "http://argo-argo-workflows-server.argo:2746",
+        "namespace": "argo",
+        "allow_insecure": "true"
+      },
+      "task_destinations": [
+        {
+          "name": "clinical-review-task",
+          "conditions": []
+        }
+      ],
+      "export_destinations": [],
+      "artifacts": {
+        "input": [
+          {
+            "name": "input-dicom",
+            "value": "{{ context.input.dicom }}",
+            "mandatory": true
+          }
+        ],
+        "output": [
+          {
+            "name": "output",
+            "value": "",
+            "mandatory": true
+          }
+        ]
+      },
+      "timeout_minutes": -1
+    },
+    {
+      "id": "clinical-review-task",
+      "description": "3D fetal brain MRI Clinical Review Task",
+      "type": "aide_clinical_review",
+      "args": {
+        "workflow_name": "fetal-brain-mri",
+        "reviewed_task_id": "brain-3d-recon",
+        "application_name": "fetal-brain-mri",
+        "application_version": "1.0.0",
+        "mode": "QA",
+        "reviewer_roles": "clinician"
+      },
+      "task_destinations": [
+          {
+          "name": "export-3d-dicom",
+          "conditions": [
+            "{{ context.executions.clinical-review-task.result.Acceptance }} == 'True'"
+          ]
+        }
+      ],
+      "artifacts": {
+        "input": [
+          {
+            "name": "input-dicom",
+            "value": "{{ context.input.dicom }}",
+            "mandatory": true
+          },
+          {
+            "name": "output",
+            "value": "",
+            "mandatory": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "export-3d-dicom",
+      "description": "Export 3D fetal brain MRI DICOMs",
+      "type": "export",
+      "args": {},
+      "task_destinations": [],
+      "export_destinations": [
+        {
+          "name": "PACS"
+        }
+      ],
+      "artifacts": {
+        "input": [
+          {
+            "name": "output",
+            "value": "{{ context.executions.brain-3d-recon.artifacts.output }}",
+            "mandatory": true
+          }
+        ],
+        "output": []
+      },
+      "timeout_minutes": -1
+    }
+  ]
+}

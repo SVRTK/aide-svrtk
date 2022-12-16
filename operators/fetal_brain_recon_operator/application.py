@@ -24,7 +24,7 @@ class FetalBrainReconstructor(AideOperator):
         for nii_stack_filename in glob.glob(nii_stacks_path + '/stack*.nii.gz'):
             shutil.copy(nii_stack_filename, nii_3d_path)
 
-        subprocess.run(["/home/scripts/docker-recon-brain-auto.bash", nii_3d_path, "1", "-1"])
+        subprocess.run(["/home/scripts/docker-recon-brain-auto.bash", nii_3d_path, "-1", "-1"])
 
         result_nii_3d = Resource(format="nifti", content_type="nii_3d", file_path=nii_3d_path)
         context.add_resource(result_nii_3d)
