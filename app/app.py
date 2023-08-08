@@ -4,17 +4,14 @@
 
 import logging
 
-from operators.rotate_image_operator import RotateImageOperator
-from operators.dcm2nii_operator import Dcm2NiiOperator
-from operators.dcmwriter_operator import DicomWriterOperator
-from operators.fetal_mri_3d_brain_recon_operator import FetalMri3dBrainOperator
-
-from monai.deploy.core import Application, resource
-from monai.deploy.core.domain import Image
-from monai.deploy.core.io_type import IOType
+from monai.deploy.core import Application
 from monai.deploy.operators.dicom_data_loader_operator import DICOMDataLoaderOperator
 from monai.deploy.operators.dicom_series_selector_operator import DICOMSeriesSelectorOperator
 from monai.deploy.operators.dicom_series_to_volume_operator import DICOMSeriesToVolumeOperator
+
+from operators.dcm2nii_operator import Dcm2NiiOperator
+from operators.dcmwriter_operator import DicomWriterOperator
+from operators.fetal_mri_3d_brain_recon_operator import FetalMri3dBrainOperator
 
 
 class FetalMri3dBrainApp(Application):
@@ -32,13 +29,8 @@ class FetalMri3dBrainApp(Application):
 
         logging.info(f"Begin {self.compose.__name__}")
 
-        # Create the custom operator(s) as well as SDK built-in operator(s).
-        study_loader_op = DICOMDataLoaderOperator()
-        series_selector_op = DICOMSeriesSelectorOperator()
-        series_to_vol_op = DICOMSeriesToVolumeOperator()
-
-        # # Rotate image operator
-        # rotate_image_op = RotateImageOperator()
+        loader = DICOMDataLoaderOperator()
+        selector = DICOMSeriesSelectorOperator(rules=Rules_Text, all_matched=True)
 
         # DICOM to NIfTI operator
         dcm2nii_op = Dcm2NiiOperator()
@@ -50,23 +42,30 @@ class FetalMri3dBrainApp(Application):
         custom_tags = {"SeriesDescription": "AI generated image, not for clinical use."}
         dcmwriter_op = DicomWriterOperator(custom_tags=custom_tags)
 
-        # TODO: figure out how to run SVRTK Docker container
-        #  - Docker containers? Split across MAPs and Docker?
+        # Operator pipeline
+        self.add_flow(loader, selector, {"dicom_study_list": "dicom_study_list"})
 
-        # Fetal Brain 3D MRI reconstruction operator pipeline
-        self.add_flow(dcm2nii_op, fetal_mri_3d_recon_op, {"input_files": "input_files"})
+        self.add_flow(selector, dcm2nii_op, {"study_selected_series_list": "study_selected_series_list"})
+        self.add_flow(dcm2nii_op, fetal_mri_3d_recon_op, {"nii_ct_dataset": "nii_ct_dataset"})
+
+        self.add_flow(dcm2nii_op, dcmwriter_op, {"dcm_input": "dcm_input"})
         self.add_flow(fetal_mri_3d_recon_op, dcmwriter_op, {"input_files": "input_files"})
-
-
-        # # rotate_image operator pipeline
-        # self.add_flow(study_loader_op, series_selector_op, {"dicom_study_list": "dicom_study_list"})
-        # self.add_flow(
-        #     series_selector_op, series_to_vol_op, {"study_selected_series_list": "study_selected_series_list"}
-        # )
-        # self.add_flow(series_to_vol_op, rotate_image_op, {"image": "image"})
 
         logging.info(f"End {self.compose.__name__}")
 
+
+Rules_Text = """
+{
+    "selections": [
+        {
+            "name": "MR Series",
+            "conditions": {
+                "Modality": "MR"
+            }
+        }
+    ]
+}
+"""
 
 if __name__ == "__main__":
     FetalMri3dBrainApp(do_run=True)
