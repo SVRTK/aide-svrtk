@@ -1,4 +1,5 @@
 highdicom==0.21.1
 monai==1.2.0
 monai-deploy-app-sdk==0.5.1
-nibabel==5.1.0
+nibabel>=5.0.0
+nii2dcm
