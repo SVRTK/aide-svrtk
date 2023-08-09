@@ -7,12 +7,10 @@ import logging
 from monai.deploy.core import Application
 from monai.deploy.operators.dicom_data_loader_operator import DICOMDataLoaderOperator
 from monai.deploy.operators.dicom_series_selector_operator import DICOMSeriesSelectorOperator
-from monai.deploy.operators.dicom_series_to_volume_operator import DICOMSeriesToVolumeOperator
 
 from operators.dcm2nii_operator import Dcm2NiiOperator
-from operators.dcmwriter_operator import DicomWriterOperator
 from operators.fetal_mri_3d_brain_recon_operator import FetalMri3dBrainOperator
-
+from operators.nii2dcm_operator import NiftiToDicomWriterOperator
 
 class FetalMri3dBrainApp(Application):
     """
@@ -39,17 +37,16 @@ class FetalMri3dBrainApp(Application):
         fetal_mri_3d_recon_op = FetalMri3dBrainOperator()
 
         # DICOM Writer operator
-        custom_tags = {"SeriesDescription": "AI generated image, not for clinical use."}
-        dcmwriter_op = DicomWriterOperator(custom_tags=custom_tags)
+        nii2dcm_op = NiftiToDicomWriterOperator()
 
         # Operator pipeline
         self.add_flow(loader, selector, {"dicom_study_list": "dicom_study_list"})
 
         self.add_flow(selector, dcm2nii_op, {"study_selected_series_list": "study_selected_series_list"})
-        self.add_flow(dcm2nii_op, fetal_mri_3d_recon_op, {"nii_ct_dataset": "nii_ct_dataset"})
+        self.add_flow(dcm2nii_op, fetal_mri_3d_recon_op, {"nii_dataset": "nii_dataset"})
 
-        self.add_flow(dcm2nii_op, dcmwriter_op, {"dcm_input": "dcm_input"})
-        self.add_flow(fetal_mri_3d_recon_op, dcmwriter_op, {"input_files": "input_files"})
+        self.add_flow(dcm2nii_op, nii2dcm_op, {"dcm_input": "dcm_input"})
+        self.add_flow(fetal_mri_3d_recon_op, nii2dcm_op, {"svrtk_output": "svrtk_output"})
 
         logging.info(f"End {self.compose.__name__}")
 

@@ -16,6 +16,7 @@ from monai.deploy.core import DataPath, ExecutionContext, InputContext, IOType, 
 
 
 @md.input("input_files", DataPath, IOType.DISK)
+@md.input("dcm_input", DataPath, IOType.DISK)
 @md.output("dicom_3d_files", DataPath, IOType.DISK)
 @md.env(pip_packages=["pydicom >= 2.3.0", "highdicom >= 0.18.2"])
 class DicomWriterOperator(Operator):

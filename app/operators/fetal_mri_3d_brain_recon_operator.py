@@ -8,8 +8,8 @@ import monai.deploy.core as md
 from monai.deploy.core import DataPath, ExecutionContext, InputContext, IOType, Operator, OutputContext
 
 
-@md.input("input_files", DataPath, IOType.DISK)
-@md.output("input_files", DataPath, IOType.DISK)
+@md.input("nii_dataset", DataPath, IOType.DISK)
+@md.output("svrtk_output", DataPath, IOType.DISK)
 @md.env(pip_packages=["pydicom >= 2.3.0", "highdicom >= 0.18.2"])
 class FetalMri3dBrainOperator(Operator):
     """
@@ -20,19 +20,19 @@ class FetalMri3dBrainOperator(Operator):
 
         logging.info(f"Begin {self.compute.__name__}")
 
-        nii_path = op_input.get("input_files").path
+        operator_workdir = os.getcwd()
 
-        input_dir = os.path.dirname(nii_path)
+        nii_stacks_path = op_input.get("nii_dataset").path
 
-        # nii_3d_path = os.path.join(input_dir, "nii_3d")
-        # if not os.path.exists(nii_3d_path):
-        #     os.makedirs(nii_3d_path)
-        op_output.set(DataPath(input_dir))  # cludge to avoid op_output not exist error
-
-        op_output_folder_path = op_output.get().path
-        op_output_folder_path.mkdir(parents=True, exist_ok=True)
-
+        # TODO(tomaroberts) test and confirm working
         # Run 3D Fetal Brain MRI reconstruction
-        subprocess.run(["/home/scripts/docker-recon-brain-auto.bash", nii_path, "-1", "-1"])
+        # subprocess.run(["/home/scripts/docker-recon-brain-auto.bash", nii_stacks_path, "-1", "-1"])
+
+        # Local testing:
+        # create dummy SVR-output.nii.gz file in same location as output from docker-recon-brain-auto.bash
+        subprocess.run(["touch", os.path.join(operator_workdir, 'SVR-output.nii.gz')])
+
+        # Set output path for next operator
+        op_output.set(DataPath(operator_workdir, "svrtk_output"))
 
         logging.info(f"End {self.compute.__name__}")
