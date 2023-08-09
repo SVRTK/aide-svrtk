@@ -1,3 +1,5 @@
+# dcm2nii_operator
+#
 # DICOM to NIfTI conversion using dcm2niix
 #
 # This operator uses Chris Rorden's dcm2niix (https://github.com/rordenlab/dcm2niix/) to convert a DICOM Series to a
@@ -62,7 +64,6 @@ class Dcm2NiiOperator(Operator):
             raise Exception('Working directory is not within .monai_workdir')
         self.operator_workdir = os.getcwd()
         logging.info(f"Working directory is: {self.operator_workdir}")
-
 
     @staticmethod
     def create_dir(dirname: str):

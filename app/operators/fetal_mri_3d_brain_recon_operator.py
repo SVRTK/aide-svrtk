@@ -1,4 +1,7 @@
+# fetal_mri_3d_brain_recon_operator
+#
 # Perform Fetal MRI 3D Brain reconstruction
+#
 
 import logging
 import os
@@ -10,7 +13,7 @@ from monai.deploy.core import DataPath, ExecutionContext, InputContext, IOType, 
 
 @md.input("nii_dataset", DataPath, IOType.DISK)
 @md.output("svrtk_output", DataPath, IOType.DISK)
-@md.env(pip_packages=["pydicom >= 2.3.0", "highdicom >= 0.18.2"])
+@md.env(pip_packages=["pydicom >= 2.3.0"])
 class FetalMri3dBrainOperator(Operator):
     """
     Fetal MRI 3D Brain Reconstruction Operator

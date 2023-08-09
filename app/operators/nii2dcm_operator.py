@@ -1,6 +1,6 @@
-# nii2dcm operator
+# nii2dcm_operator
 #
-# This operator converts the NIfTI output from SVRTK into a 3D DICOM dataset using nii2dcm
+# Convert NIfTI output from SVRTK into a 3D DICOM dataset using nii2dcm
 #
 
 import logging

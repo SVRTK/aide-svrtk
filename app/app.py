@@ -1,6 +1,7 @@
-# AI-derived 3D fetal brain MRI reconstruction with SVRTK – MONAI Application Package (MAP)
+# AI-driven 3D fetal brain MRI reconstruction using SVRTK constructed as a MONAI Application Package (MAP)
 #
 # Tom Roberts (tom.roberts@gstt.nhs.uk / t.roberts@kcl.ac.uk)
+#
 
 import logging
 
@@ -11,6 +12,7 @@ from monai.deploy.operators.dicom_series_selector_operator import DICOMSeriesSel
 from operators.dcm2nii_operator import Dcm2NiiOperator
 from operators.fetal_mri_3d_brain_recon_operator import FetalMri3dBrainOperator
 from operators.nii2dcm_operator import NiftiToDicomWriterOperator
+
 
 class FetalMri3dBrainApp(Application):
     """
