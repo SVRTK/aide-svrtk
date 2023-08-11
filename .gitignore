@@ -136,3 +136,7 @@ dmypy.json
 # Test Data folder
 /test_data
 /test_env
+
+# DICOM and Nifti files
+*.nii.gz
+*.dcm

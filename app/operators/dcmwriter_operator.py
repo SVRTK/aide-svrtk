@@ -1,46 +1,70 @@
-import os
+# 3D Fetal MRI DICOM Writer operator
+
 import datetime
-import numpy as np
+import logging
+import os
+
 import nibabel as nib
+import numpy as np
 import pydicom as pyd
-from pydicom.dataset import Dataset
 from pydicom.datadict import DicomDictionary, keyword_dict
+from pydicom.dataset import Dataset
 from pydicom.sequence import Sequence
 
-from aide_sdk.inference.aideoperator import AideOperator
-from aide_sdk.model.operatorcontext import OperatorContext
-from aide_sdk.model.resource import Resource
-from aide_sdk.utils.file_storage import FileStorage
+import monai.deploy.core as md
+from monai.deploy.core import DataPath, ExecutionContext, InputContext, IOType, Operator, OutputContext
 
 
-class Nii2Dcm(AideOperator):
+@md.input("input_files", DataPath, IOType.DISK)
+@md.output("dicom_3d_files", DataPath, IOType.DISK)
+@md.env(pip_packages=["pydicom >= 2.3.0", "highdicom >= 0.18.2"])
+class DicomWriterOperator(Operator):
+    """
+    DICOM writer
+    """
 
-    def process(self, context: OperatorContext):
-        file_manager = FileStorage(context)
+    def compute(self, op_input: InputContext, op_output: OutputContext, context: ExecutionContext):
 
-        dicom_series1 = context.origin.series[0]
-        dcm_stack1_path = dicom_series1.images[0].image_path
+        logging.info(f"Begin {self.compute.__name__}")
 
-        nii_3d_resource = next(context.get_resources_by_type(format='nifti', content_type='nii_3d'))
-        nii_3d_path = os.path.join(nii_3d_resource.file_path, 'SVR-output.nii.gz')  # Think .file_path = folder?
+        input_path = op_input.get("input_files").path
+        nii_3d_path = input_path / 'nii_processing' / 'SVR-output.nii.gz'
 
-        dcm_3d_path = os.path.join(file_manager.mount_point, file_manager.write_location, 'dcm_3d')
-        if not os.path.exists(dcm_3d_path):
-            os.makedirs(dcm_3d_path)
+        dcm_stacks_path = input_path / 'dcm_stacks'
+        dcm_files = [f for f in dcm_stacks_path.iterdir() if f.is_file()]  #TODO: add logic to find specific stack
 
-        # create 3D dicom
-        # dcm_stack1_path = DICOM file
+        # determine first acquired series (dcm_ref)
+        series_numbers = []
+        for file in dcm_files[:]:
+            try:
+                dcm = pyd.dcmread(file)
+                if 'MR' in dcm.Modality:
+                    series_numbers.append(int(dcm.SeriesNumber))
+            except:
+                logging.warning(f"File {file} does not appear to be DICOM")
+                dcm_files.remove(file)
+
+        series_numbers_list_order = [i[0] for i in sorted(enumerate(series_numbers), key=lambda x: x[1])]
+
+        dcm_ref_path = dcm_files[series_numbers_list_order[0]]
+
+        dcm_3d_path = op_output.get().path
+        # For local testing:
+        # dcm_3d_path = os.path.join(op_output.get().path, 'DICOM')
+        # if not os.path.exists(dcm_3d_path):
+        #     os.makedirs(dcm_3d_path)
+
+        # Create 3D SVR DICOM files
+        # dcm_ref_path = 2D input stack DICOM file
         # nii_3d_path = SVR-output.nii.gz file
-        # dcm_3d_path = folder
-        # file_manager = required for writing PyDicom dataset
-        svr_nii2dcm(dcm_stack1_path, nii_3d_path, dcm_3d_path, file_manager)
+        # dcm_3d_path = 3D output DICOM folder
+        svr_nii2dcm(dcm_ref_path, nii_3d_path, dcm_3d_path)
 
-        result_dcm_3d = Resource(format="dicom", content_type="result", file_path=dcm_3d_path)
-        context.add_resource(result_dcm_3d)
-        return context
+        logging.info(f"End {self.compute.__name__}")
 
 
 # TODO: horrible code below... needs major refactoring...
+
 def get_nii_parameters(niiIn):
     """ Get parameters from nifti to transfer to dicom
 
@@ -222,16 +246,11 @@ def elem_initialise(uid_instance, uid_series_instance, uid_frame_of_reference, n
         'AccessionNumber': 'AccessionNumber',
         'Modality': 'Modality',
         'ConversionType': 'ConversionType',
-        'InstitutionName': 'InstitutionName',
-        'InstitutionAddress': 'InstitutionAddress',
         'ReferringPhysicianName': 'ReferringPhysicianName',
         'CodeValue': 'CodeValue',
         'CodingSchemeDesignator': 'CodingSchemeDesignator',
-        'CodeMeaning': 'CodeMeaning',
         'StationName': 'StationName',
         'StudyDescription': 'StudyDescription',
-        'InstitutionalDepartmentName': 'InstitutionalDepartmentName',
-        'PerformingPhysicianName': 'PerformingPhysicianName',
         'OperatorsName': 'OperatorsName',
         'ManufacturerModelName': 'ManufacturerModelName',
 
@@ -240,48 +259,19 @@ def elem_initialise(uid_instance, uid_series_instance, uid_frame_of_reference, n
         'PatientID': 'PatientID',
         'PatientBirthDate': 'PatientBirthDate',
         'PatientSex': 'PatientSex',
-        'PatientAge': 'PatientAge',
         'PatientWeight': 'PatientWeight',
-        'PregnancyStatus': 'PregnancyStatus',
         'BodyPartExamined': 'BodyPartExamined',
 
         # series
-        'ScanningSequence': 'ScanningSequence',
-        'SequenceVariant': 'SequenceVariant',
         'ScanOptions': 'ScanOptions',
         'RepetitionTime': 'RepetitionTime',
         'EchoTime': 'EchoTime',
         'NumberOfAverages': 'NumberOfAverages',
-        'ImagingFrequency': 'ImagingFrequency',
-        'ImagedNucleus': 'ImagedNucleus',
-        'EchoNumbers': 'EchoNumbers',
         'MagneticFieldStrength': 'MagneticFieldStrength',
-        'NumberOfPhaseEncodingSteps': '',
-        'PercentSampling': '',
-        'PercentPhaseFieldOfView': '',
-        'PixelBandwidth': '',
-        'DeviceSerialNumber': 'DeviceSerialNumber',
         # ... skipped some SecondaryCaptureDevice fields
         'SoftwareVersions': 'SoftwareVersions',
-        'TriggerTime': 'TriggerTime',
-        'LowRRValue': 'LowRRValue',
-        'HighRRValue': 'HighRRValue',
-        'IntervalsAcquired': 'IntervalsAcquired',
-        'IntervalsRejected': 'IntervalsRejected',
-        'HeartRate': 'HeartRate',
-        'TriggerWindow': 'TriggerWindow',
-        'ReconstructionDiameter': '',
-        'ReceiveCoilName': 'ReceiveCoilName',
-        'TransmitCoilName': 'TransmitCoilName',
-        'InPlanePhaseEncodingDirection': '',
         'FlipAngle': 'FlipAngle',
-        'SAR': '',
-        'dBdt': '',
-        'B1rms': '',
         'PatientPosition': 'PatientPosition',
-        'AcquisitionDuration': '',
-        'DiffusionBValue': 'DiffusionBValue',
-        'DiffusionGradientOrientation': 'DiffusionGradientOrientation',
         'StudyInstanceUID': 'StudyInstanceUID',
         'StudyID': 'StudyID',
         'PhotometricInterpretation': 'PhotometricInterpretation',
@@ -290,8 +280,6 @@ def elem_initialise(uid_instance, uid_series_instance, uid_frame_of_reference, n
         'HighBit': 'HighBit',
         'PixelRepresentation': 'PixelRepresentation',
         'LossyImageCompression': 'LossyImageCompression',
-        'RequestingPhysician': 'RequestingPhysician',
-        'RequestingService': 'RequestingService',
         'RequestedProcedureDescription': 'RequestedProcedureDescription',
         'RequestedContrastAgent': 'RequestedContrastAgent',
         'PerformedStationAETitle': 'PerformedStationAETitle',
@@ -361,7 +349,7 @@ def create_seq_stack(ds, nii_parameters):
     return ds
 
 
-def svr_nii2dcm(dcmInPath, niiInPath, dcmOutPath, file_manager):
+def svr_nii2dcm(dcmInPath, niiInPath, dcmOutPath):
     """ Convert 3D SVR NIfTI to 3D single-frame DICOM dataset
 
     :dcmInPath: directory containing original 2D DICOM dataset, for transferring tags
@@ -542,8 +530,7 @@ def svr_nii2dcm(dcmInPath, niiInPath, dcmOutPath, file_manager):
         # create dicom
         ds.PresentationLUTShape = 'IDENTITY'
         ds.PixelData = nii_img[:, :, iInstance].tobytes()
-
-        file_manager.save_dicom(os.path.join(dcmOutPath, r'IM_%04d' % (iFileCtr)), ds)
+        ds.save_as(os.path.join(dcmOutPath, r'IM_%04d.dcm' % (iFileCtr)), write_like_original=False)
 
         iFileCtr = iFileCtr + 1
 

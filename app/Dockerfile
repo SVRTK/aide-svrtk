@@ -1,11 +1,25 @@
-FROM pytorch/pytorch:1.9.0-cuda11.1-cudnn8-devel
+FROM fetalsvrtk/aide:map-test AS build
+
+# Add dcm2niix to MAP
+WORKDIR /bin
+
+RUN apt-get update && apt-get install --no-install-recommends --no-install-suggests -y \
+	git build-essential cmake pigz
+
+RUN git clone https://github.com/rordenlab/dcm2niix.git --branch master --single-branch \
+	&& cd dcm2niix \
+	&& mkdir build && cd build \
+	&& cmake .. \
+	&& make
+
+ENV PATH="$PATH:/bin/dcm2niix/build/bin"
+
+WORKDIR /var/monai
+
+
+# Add SVRTK to MAP
 
 WORKDIR /home
-
-# Nvidia GPG key error fix
-# See: https://github.com/NVIDIA/nvidia-docker/issues/1631
-RUN rm /etc/apt/sources.list.d/cuda.list
-RUN rm /etc/apt/sources.list.d/nvidia-ml.list
 
 # Install general libraries
 RUN apt-get update && apt-get install --no-install-recommends --no-install-suggests -y \
@@ -32,6 +46,13 @@ RUN git clone https://github.com/SVRTK/SVRTK.git /home/MIRTK/Packages/SVRTK \
 
 ENV PATH="$PATH:/home/MIRTK/build/bin:/home/MIRTK/build/lib/tools"
 
+WORKDIR /var/monai
+
+
+# Add 3D UNet model weights & execution script
+
+WORKDIR /home
+
 # Setup 3D UNet models
 RUN git clone https://github.com/SVRTK/Segmentation_FetalMRI.git --branch svrtk-docker-gpu-0.10 --single-branch /home/Segmentation_FetalMRI
 
@@ -48,12 +69,4 @@ RUN mkdir -p /home/recon \
     && mkdir -p /home/output \
     && chmod +x /home/scripts/*
 
-# AIDE SDK files
-COPY requirements.txt requirements.txt
-RUN pip install -r requirements.txt
-
-COPY main.py main.py
-COPY application.py application.py
-COPY manifest.json manifest.json
-
-CMD ["python", "main.py"]
+WORKDIR /var/monai
