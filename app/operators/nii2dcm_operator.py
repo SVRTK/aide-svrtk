@@ -71,7 +71,6 @@ class NiftiToDicomWriterOperator(Operator):
         logging.info(f"DICOM file selected as reference for nii2dcm conversion: {dcm_ref_path}")
 
         # run nii2dcm
-        # TODO(tomaroberts) add dcm_ref_path to call below once nii2dcm has --ref_dicom option
         logging.info("Performing NIFTI to DICOM conversion ...")
         run_nii2dcm(
             svrtk_nii_path,

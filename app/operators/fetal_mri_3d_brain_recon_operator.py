@@ -21,19 +21,27 @@ class FetalMri3dBrainOperator(Operator):
 
     def compute(self, op_input: InputContext, op_output: OutputContext, context: ExecutionContext):
 
+        is_local_testing = False  # set True to bypass SVRTK
+
         logging.info(f"Begin {self.compute.__name__}")
 
         operator_workdir = os.getcwd()
 
         nii_stacks_path = op_input.get("nii_dataset").path
 
-        # TODO(tomaroberts) test and confirm working
+        logging.info("Performing SVRTK reconstruction ...")
+
         # Run 3D Fetal Brain MRI reconstruction
-        # subprocess.run(["/home/scripts/docker-recon-brain-auto.bash", nii_stacks_path, "-1", "-1"])
+        # TODO(tomaroberts) test and confirm working
+        if not is_local_testing:
+            subprocess.run(["/home/scripts/docker-recon-brain-auto.bash", nii_stacks_path, "-1", "-1"])
 
         # Local testing:
         # create dummy SVR-output.nii.gz file in same location as output from docker-recon-brain-auto.bash
-        subprocess.run(["touch", os.path.join(operator_workdir, 'SVR-output.nii.gz')])
+        if is_local_testing:
+            subprocess.run(["cp", "/path/to/local/SVR-output.nii.gz", operator_workdir])
+
+        logging.info("Completed SVRTK reconstruction ...")
 
         # Set output path for next operator
         op_output.set(DataPath(operator_workdir, "svrtk_output"))
