@@ -2,7 +2,9 @@
 
 [AIDE](https://www.aicentre.co.uk/platforms#view1) is an open-source platform for the deployment of AI applications in healthcare settings.
 
-This repo packages automated 3D Fetal Brain MRI reconstruction into a [MONAI Application Package (MAP)](https://github.com/Project-MONAI/monai-deploy) for execution on AIDE.
+This repo, created and led by [Tom Roberts](https://github.com/tomaroberts), packages automated 3D Fetal Brain MRI 
+reconstruction into a [MONAI Application Package (MAP)](https://github.com/Project-MONAI/monai-deploy) for execution 
+on AIDE.
 
 ## Developers
 
