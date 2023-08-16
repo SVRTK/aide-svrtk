@@ -5,7 +5,6 @@
 
 import logging
 import os
-import subprocess
 from nii2dcm.run import run_nii2dcm
 import pydicom as pyd
 from pathlib import Path
@@ -17,7 +16,7 @@ from monai.deploy.core import DataPath, ExecutionContext, InputContext, IOType, 
 @md.input("svrtk_output", DataPath, IOType.DISK)
 @md.input("dcm_input", DataPath, IOType.DISK)
 @md.output("dicom_3d_files", DataPath, IOType.DISK)
-@md.env(pip_packages=["pydicom >= 2.3.0"])
+@md.env(pip_packages=["pydicom >= 2.3.0, nii2dcm >= 0.1.1"])
 class NiftiToDicomWriterOperator(Operator):
     """
     DicomWriterOperator - converts a NIfTI file to DICOM MR Image dataset using nii2dcm
@@ -63,7 +62,7 @@ class NiftiToDicomWriterOperator(Operator):
 
         # input DICOM files
         dcm_input_path = op_input.get("dcm_input").path
-        dcm_files = [f for f in dcm_input_path.iterdir() if f.is_file()]  #TODO: add logic to find specific stack
+        dcm_files = [f for f in dcm_input_path.iterdir() if f.is_file()]  # TODO: add logic to find specific stack
         for d in dcm_files:
             logging.info(f"Original input DICOM file found: {d}")
 
@@ -74,7 +73,12 @@ class NiftiToDicomWriterOperator(Operator):
         # run nii2dcm
         # TODO(tomaroberts) add dcm_ref_path to call below once nii2dcm has --ref_dicom option
         logging.info("Performing NIFTI to DICOM conversion ...")
-        run_nii2dcm(svrtk_nii_path, dcm_output_path, dicom_type='SVR')
+        run_nii2dcm(
+            svrtk_nii_path,
+            dcm_output_path,
+            dicom_type='SVR',
+            ref_dicom_file=dcm_ref_path,
+        )
         logging.info(f"DICOM files written to: {dcm_output_path}")
 
         logging.info(f"End {self.compute.__name__}")
