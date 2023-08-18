@@ -6,6 +6,7 @@
 import logging
 import os
 import subprocess
+import torch
 
 import monai.deploy.core as md
 from monai.deploy.core import DataPath, ExecutionContext, InputContext, IOType, Operator, OutputContext
@@ -26,15 +27,29 @@ class FetalMri3dBrainOperator(Operator):
         logging.info(f"Begin {self.compute.__name__}")
 
         operator_workdir = os.getcwd()
-
         nii_stacks_path = op_input.get("nii_dataset").path
 
         logging.info("Performing SVRTK reconstruction ...")
 
-        # Run 3D Fetal Brain MRI reconstruction
-        # TODO(tomaroberts) test and confirm working
+        # Run motion corrected reconstruction
         if not is_local_testing:
-            subprocess.run(["/home/scripts/docker-recon-brain-auto.bash", nii_stacks_path, "-1", "-1"])
+            if torch.cuda.is_available():
+                cnn_mode = "1"
+                logging("SVRTK reconstruction using GPU mode ...")
+            elif not torch.cuda.is_available():
+                cnn_mode = "-1"
+                logging("SVRTK reconstruction using CPU mode ...")
+
+            motion_correction_mode = "-1"  # -1 minor, 1 severe
+            logging("SVRTK reconstruction using Minor motion correction mode ...")
+
+            subprocess.run([
+                "/home/scripts/docker-recon-brain-auto.bash",
+                nii_stacks_path,
+                operator_workdir,
+                cnn_mode,
+                motion_correction_mode
+            ])
 
         # Local testing:
         # create dummy SVR-output.nii.gz file in same location as output from docker-recon-brain-auto.bash
