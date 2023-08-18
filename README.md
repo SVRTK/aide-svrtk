@@ -42,5 +42,5 @@ docker push fetalsvrtk/aide:map
 monai-deploy run fetalsvrtk/aide:map input/ output/
 
 # To enter MAP for testing (nb: DGX paths)
-docker run -it --rm -v /home/troberts/code/aide-svrtk/input/nii_stacks:/home/recon --entrypoint /bin/bash fetalsvrtk/aide:map
+docker run -it --gpus all --rm -v /path/to/aide-svrtk/input:/var/monai/input --entrypoint /bin/bash fetalsvrtk/aide:map
 ```
