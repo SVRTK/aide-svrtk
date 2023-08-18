@@ -55,13 +55,18 @@ class Dcm2NiiOperator(Operator):
 
     def get_operator_workdir(self):
         """
-        Check working directory within .monai_workdir and set as variable
+        Check working directory within /.monai_workdir or /monai and set as variable
+
+        Important - working directory pathname contains:
+        - "/.monai_workdir" when running locally via: monai-deploy exec  app ..
+        - "/monai" when running within MAP container
 
         IMPORTANT NOTE: os.getcwd() returns different location when used within __init__() and within compute(),
         presumably because MONAI Deploy switches the working directory by the time code enters compute function.
         """
-        if '/.monai_workdir' not in os.getcwd():
-            raise Exception('Working directory is not within .monai_workdir')
+        possible_workdir_names = ['/monai', '/.monai_workdir']
+        if not any([x in os.getcwd() for x in possible_workdir_names]):
+            raise Exception(f'Working directory does not contain one of: {possible_workdir_names}')
         self.operator_workdir = os.getcwd()
         logging.info(f"Working directory is: {self.operator_workdir}")
 
