@@ -28,6 +28,8 @@ import os
 import shutil
 import subprocess
 from typing import List
+from pydicom.misc import is_dicom
+
 import monai.deploy.core as md
 from monai.deploy.core import DataPath, ExecutionContext, InputContext, IOType, Operator, OutputContext
 from monai.deploy.core.domain.dicom_series_selection import StudySelectedSeries
@@ -109,10 +111,12 @@ class Dcm2NiiOperator(Operator):
                 dcm_filepath = instance._sop.filename
 
                 # copy file
-                if str(dcm_filepath).lower().endswith('.dcm'):
+                if is_dicom(dcm_filepath):
                     logging.info(f"Copying DICOM file - Series: {idx_s + 1}, Instance: {idx_i + 1} ...")
                     destination_path = shutil.copy2(dcm_filepath, os.path.join(workdir, dcm_input_dir))
                     logging.info(f"Copied {dcm_filepath} to {destination_path}")
+                elif not is_dicom(dcm_filepath):
+                    logging.info(f"Non-DICOM file found. Skipping file: {dcm_filepath}")
 
     @staticmethod
     def run_dcm2niix(input_dcm_dirname, output_nii_dirname, output_nii_filename):
