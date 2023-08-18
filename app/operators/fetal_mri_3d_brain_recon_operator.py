@@ -35,13 +35,13 @@ class FetalMri3dBrainOperator(Operator):
         if not is_local_testing:
             if torch.cuda.is_available():
                 cnn_mode = "1"
-                logging("SVRTK reconstruction using GPU mode ...")
-            elif not torch.cuda.is_available():
+                logging.info("SVRTK reconstruction using GPU mode ...")
+            if not torch.cuda.is_available():
                 cnn_mode = "-1"
-                logging("SVRTK reconstruction using CPU mode ...")
+                logging.info("SVRTK reconstruction using CPU mode ...")
 
             motion_correction_mode = "-1"  # -1 minor, 1 severe
-            logging("SVRTK reconstruction using Minor motion correction mode ...")
+            logging.info("SVRTK reconstruction using Minor motion correction mode ...")
 
             subprocess.run([
                 "/home/scripts/docker-recon-brain-auto.bash",
