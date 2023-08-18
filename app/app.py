@@ -5,7 +5,7 @@
 
 import logging
 
-from monai.deploy.core import Application
+from monai.deploy.core import Application, resource
 from monai.deploy.operators.dicom_data_loader_operator import DICOMDataLoaderOperator
 from monai.deploy.operators.dicom_series_selector_operator import DICOMSeriesSelectorOperator
 
@@ -14,6 +14,7 @@ from operators.fetal_mri_3d_brain_recon_operator import FetalMri3dBrainOperator
 from operators.nii2dcm_operator import NiftiToDicomWriterOperator
 
 
+@resource(cpu=16, gpu=1, memory="32Gi")
 class FetalMri3dBrainApp(Application):
     """
     Motion-corrected 3D fetal brain MRI Application class
