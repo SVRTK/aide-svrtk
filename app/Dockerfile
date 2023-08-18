@@ -70,7 +70,7 @@ RUN python -m pip install -r /home/Segmentation_FetalMRI/requirements.txt
 ENV PATH="${PATH}:/opt/hpcx/ompi/bin"
 ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/opt/hpcx/ompi/lib"
 
-COPY docker-recon-brain-auto.bash /home/scripts/docker-recon-brain-auto.bash
+COPY operators/docker-recon-brain-auto.bash /home/scripts/docker-recon-brain-auto.bash
 RUN mkdir -p /home/recon \
     && mkdir -p /home/output \
     && chmod +x /home/scripts/*
