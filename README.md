@@ -31,7 +31,7 @@ Note: currently need two stage process: construct initial MAP, then build on top
 
 ```shell
 # Build & push initial MAP
-monai-deploy package app --tag fetalsvrtk/aide:map-test -l DEBUG
+monai-deploy package app --tag fetalsvrtk/aide:map-test -l DEBUG -r requirements.txt
 docker push fetalsvrtk/aide:map-test
 
 # Build on top of MAP & push final MAP
