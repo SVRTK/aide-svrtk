@@ -1,16 +1,20 @@
+# fetal_mri_3d_brain_recon_operator
+#
 # Perform Fetal MRI 3D Brain reconstruction
+#
 
 import logging
 import os
 import subprocess
+import torch
 
 import monai.deploy.core as md
 from monai.deploy.core import DataPath, ExecutionContext, InputContext, IOType, Operator, OutputContext
 
 
-@md.input("input_files", DataPath, IOType.DISK)
-@md.output("input_files", DataPath, IOType.DISK)
-@md.env(pip_packages=["pydicom >= 2.3.0", "highdicom >= 0.18.2"])
+@md.input("nii_dataset", DataPath, IOType.DISK)
+@md.output("svrtk_output", DataPath, IOType.DISK)
+@md.env(pip_packages=["pydicom >= 2.3.0"])
 class FetalMri3dBrainOperator(Operator):
     """
     Fetal MRI 3D Brain Reconstruction Operator
@@ -18,21 +22,43 @@ class FetalMri3dBrainOperator(Operator):
 
     def compute(self, op_input: InputContext, op_output: OutputContext, context: ExecutionContext):
 
+        is_local_testing = False  # set True to bypass SVRTK
+
         logging.info(f"Begin {self.compute.__name__}")
 
-        nii_path = op_input.get("input_files").path
+        operator_workdir = os.getcwd()
+        nii_stacks_path = op_input.get("nii_dataset").path
 
-        input_dir = os.path.dirname(nii_path)
+        logging.info("Performing SVRTK reconstruction ...")
 
-        # nii_3d_path = os.path.join(input_dir, "nii_3d")
-        # if not os.path.exists(nii_3d_path):
-        #     os.makedirs(nii_3d_path)
-        op_output.set(DataPath(input_dir))  # cludge to avoid op_output not exist error
+        # Run motion corrected reconstruction
+        if not is_local_testing:
+            if torch.cuda.is_available():
+                cnn_mode = "1"
+                logging.info("SVRTK reconstruction using GPU mode ...")
+            if not torch.cuda.is_available():
+                cnn_mode = "-1"
+                logging.info("SVRTK reconstruction using CPU mode ...")
 
-        op_output_folder_path = op_output.get().path
-        op_output_folder_path.mkdir(parents=True, exist_ok=True)
+            motion_correction_mode = "-1"  # -1 minor, 1 severe
+            logging.info("SVRTK reconstruction using Minor motion correction mode ...")
 
-        # Run 3D Fetal Brain MRI reconstruction
-        subprocess.run(["/home/scripts/docker-recon-brain-auto.bash", nii_path, "-1", "-1"])
+            subprocess.run([
+                "/home/scripts/docker-recon-brain-auto.bash",
+                nii_stacks_path,
+                operator_workdir,
+                cnn_mode,
+                motion_correction_mode
+            ])
+
+        # Local testing:
+        # create dummy SVR-output.nii.gz file in same location as output from docker-recon-brain-auto.bash
+        if is_local_testing:
+            subprocess.run(["cp", "/path/to/local/SVR-output.nii.gz", operator_workdir])
+
+        logging.info("Completed SVRTK reconstruction ...")
+
+        # Set output path for next operator
+        op_output.set(DataPath(operator_workdir, "svrtk_output"))
 
         logging.info(f"End {self.compute.__name__}")

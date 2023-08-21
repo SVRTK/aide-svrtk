@@ -64,6 +64,12 @@ RUN wget https://gin.g-node.org/SVRTK/fetal_mri_network_weights/raw/master/check
 # Install Python packages
 RUN python -m pip install -r /home/Segmentation_FetalMRI/requirements.txt
 
+# Bugfix: without below, cannot import torch within Python
+# Error: OSError: /opt/hpcx/ompi/lib/libmpi.so.40: undefined symbol: opal_hwloc201_hwloc_get_type_depth
+# Fix: https://forums.developer.nvidia.com/t/issues-building-docker-image-from-ngc-container-nvcr-io-nvidia-pytorch-22-py3/209034/5
+ENV PATH="${PATH}:/opt/hpcx/ompi/bin"
+ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/opt/hpcx/ompi/lib"
+
 COPY docker-recon-brain-auto.bash /home/scripts/docker-recon-brain-auto.bash
 RUN mkdir -p /home/recon \
     && mkdir -p /home/output \

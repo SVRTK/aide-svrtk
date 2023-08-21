@@ -140,3 +140,7 @@ dmypy.json
 # DICOM and Nifti files
 *.nii.gz
 *.dcm
+
+# DICOM filenames
+IM_*
+_im*

@@ -20,11 +20,14 @@ echo
 #folder with input files
 default_recon_dir=$1
 
+#output path
+output_path=$2
+
 #cnn mode: -1 cpu, 1 gpu
-cnn_mode=$2
+cnn_mode=$3
 
 #severity of motion mode: -1 minor, 1 severe
-motion_correction_mode=$3
+motion_correction_mode=$4
 
 
 source ~/.bashrc
@@ -34,8 +37,6 @@ cd ${default_recon_dir}
 ###### DEFAULT PARAMETERS AND PATHS
 ##########################################################################################################################
 
-# SVR output path for AIDE
-output_path=/home/output
 
 # software and network weight paths
 mirtk_path=/home/MIRTK/build/bin
