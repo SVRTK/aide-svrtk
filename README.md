@@ -1,9 +1,6 @@
 <!-- PROJECT HEADING -->
 <br />
 <p align="center">
-<a href="https://github.com/SVRTK/aide-svrtk">
-  <img src="docs/images/TotalSegmentation-AIDE_badge_organs.png" alt="Logo" width="45%">
-</a>
 <h1 align="center">aide-svrtk</h1>
 <p align="center">
   AI-driven, automated <a href="https://github.com/SVRTK/SVRTK">SVR reconstruction</a> packaged as an AIDE Application, based on 
