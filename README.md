@@ -18,7 +18,7 @@
 
 ## Overview
 
-The slice-to-volume reconstruction toolkit ([SVRTK)](https://github.com/SVRTK/SVRTK)) is an image-based registration 
+The slice-to-volume reconstruction toolkit ([SVRTK](https://github.com/SVRTK/SVRTK)) is an image-based registration 
 framework for reconstruction of 3D volumes from multiple 2D image slices. SVRTK is used extensively for performing 
 motion-corrected reconstruction of MRI data. 
 
