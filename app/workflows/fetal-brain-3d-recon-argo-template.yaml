@@ -32,7 +32,7 @@ spec:
       metadata: {}
       container:
         name: ''
-        image: fetalsvrtk/aide:map
+        image: ghcr.io/svrtk/aide-svrtk/map:0.1.0
         command:
           - /bin/bash
           - '-c'
@@ -40,6 +40,13 @@ spec:
           - python3 -u /opt/monai/app/app.py
         resources:
           limits:
+            cpu: '20'
+            memory: 64000Mi
             nvidia.com/gpu: '1'
+          requests:
+            cpu: '0'
+            memory: '0'
+            nvidia.com/gpu: '1'
+        imagePullPolicy: IfNotPresent
   entrypoint: fetal-brain-3d-recon
   arguments: {}
