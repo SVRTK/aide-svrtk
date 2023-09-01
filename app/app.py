@@ -22,7 +22,7 @@ class FetalMri3dBrainApp(Application):
 
     name = "3d-fetal-brain-mri"
     description = "Motion-corrected 3D fetal brain MRI application."
-    version = "0.1.0"
+    version = "0.2.0"
 
     def compose(self):
         """Operators go in here
