@@ -1,4 +1,6 @@
-FROM fetalsvrtk/aide:map-test AS build
+ARG INIT_CONTAINER
+
+FROM $INIT_CONTAINER AS build
 
 # Add dcm2niix to MAP
 WORKDIR /bin
