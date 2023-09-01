@@ -1,4 +1,4 @@
-FROM fetalsvrtk/aide:map-test AS build
+FROM ghcr.io/svrtk/aide-svrtk/map-init:0.2.0 AS build
 
 # Add dcm2niix to MAP
 WORKDIR /bin
