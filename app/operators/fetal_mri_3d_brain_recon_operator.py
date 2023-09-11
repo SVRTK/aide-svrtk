@@ -33,28 +33,26 @@ class FetalMri3dBrainOperator(Operator):
 
         # Run motion corrected reconstruction
         if not is_local_testing:
-            if torch.cuda.is_available():
-                cnn_mode = "1"
-                logging.info("SVRTK reconstruction using GPU mode ...")
-            if not torch.cuda.is_available():
-                cnn_mode = "-1"
-                logging.info("SVRTK reconstruction using CPU mode ...")
-
-            motion_correction_mode = "-1"  # -1 minor, 1 severe
-            logging.info("SVRTK reconstruction using Minor motion correction mode ...")
+#            if torch.cuda.is_available():
+#                cnn_mode = "1"
+#                logging.info("SVRTK reconstruction using GPU mode ...")
+#            if not torch.cuda.is_available():
+#                cnn_mode = "-1"
+#                logging.info("SVRTK reconstruction using CPU mode ...")
+#
+#            motion_correction_mode = "-1"  # -1 minor, 1 severe
+            logging.info("SVRTK reconstruction ...")
 
             subprocess.run([
                 "/home/scripts/docker-recon-brain-auto.bash",
                 nii_stacks_path,
-                operator_workdir,
-                cnn_mode,
-                motion_correction_mode
+                operator_workdir
             ])
 
         # Local testing:
         # create dummy SVR-output.nii.gz file in same location as output from docker-recon-brain-auto.bash
         if is_local_testing:
-            subprocess.run(["cp", "/path/to/local/SVR-output.nii.gz", operator_workdir])
+            subprocess.run(["cp", "/path/to/local/reo-SVR-output-brain.nii.gz", operator_workdir])
 
         logging.info("Completed SVRTK reconstruction ...")
 
