@@ -41,7 +41,7 @@ class FetalMri3dBrainOperator(Operator):
 #                logging.info("SVRTK reconstruction using CPU mode ...")
 #
 #            motion_correction_mode = "-1"  # -1 minor, 1 severe
-            logging.info("SVRTK reconstruction ...")
+#            logging.info("SVRTK reconstruction ...")
 
             subprocess.run([
                 "/home/scripts/docker-recon-brain-auto.bash",
