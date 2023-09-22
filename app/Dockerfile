@@ -19,7 +19,7 @@ WORKDIR /var/monai
 
 # Add SVRTK to MAP
 
-WORKDIR /home
+WORKDIR /bin
 
 # Install general libraries
 RUN apt-get update && apt-get install --no-install-recommends --no-install-suggests -y \
@@ -37,14 +37,14 @@ RUN apt-get install -y \
 
 # Install MIRTK/SVRTK
 RUN git clone https://github.com/SVRTK/MIRTK.git \
-    && mkdir -p /home/MIRTK/Packages/SVRTK
-RUN git clone https://github.com/SVRTK/SVRTK.git /home/MIRTK/Packages/SVRTK \
-    && mkdir -p /home/MIRTK/build \
-	&& cd /home/MIRTK/build \
+    && mkdir -p /bin/MIRTK/Packages/SVRTK
+RUN git clone https://github.com/SVRTK/SVRTK.git /bin/MIRTK/Packages/SVRTK \
+    && mkdir -p /bin/MIRTK/build \
+	&& cd /bin/MIRTK/build \
 	&& cmake -D WITH_TBB="ON" -D MODULE_SVRTK="ON" .. \
 	&& make -j
 
-ENV PATH="$PATH:/home/MIRTK/build/bin:/home/MIRTK/build/lib/tools"
+ENV PATH="$PATH:/bin/MIRTK/build/bin:/bin/MIRTK/build/lib/tools"
 
 WORKDIR /var/monai
 
