@@ -101,14 +101,14 @@ The final MAP is called `map`
 monai-deploy package app -t ghcr.io/svrtk/aide-svrtk/map-init:0.2.0 -r requirements.txt -l DEBUG
 
 # Build 3rd-party software on top of MAP
-docker build -t ghcr.io/svrtk/aide-svrtk/map:0.2.0 app/
+docker build -t ghcr.io/svrtk/aide-svrtk/map:0.2.1 app/
 
 # Test MAP with MONAI Deploy
-monai-deploy run ghcr.io/svrtk/aide-svrtk/map:0.2.0 input/ output/
+monai-deploy run ghcr.io/svrtk/aide-svrtk/map:0.2.1 input/ output/
 
 # Push initial MAP and final MAP to GHCR
 docker push ghcr.io/svrtk/aide-svrtk/map-init:0.2.0
-docker push ghcr.io/svrtk/aide-svrtk/map:0.2.0
+docker push ghcr.io/svrtk/aide-svrtk/map:0.2.1
 ```
 
 ## Optional
@@ -116,13 +116,13 @@ docker push ghcr.io/svrtk/aide-svrtk/map:0.2.0
 Enter Docker container for testing
 
 ```shell
-docker run --gpus all -it --rm -v local/path/to/aide-svrtk/input:/var/monai/input/ --entrypoint /bin/bash ghcr.io/svrtk/aide-svrtk/map:0.2.0
+docker run --gpus all -it --rm -v local/path/to/aide-svrtk/input:/var/monai/input/ --entrypoint /bin/bash ghcr.io/svrtk/aide-svrtk/map:0.2.1
 ```
 
 Run on specified GPU if machine has >1 available
 
 ```shell
-CUDA_VISIBLE_DEVICES=2 monai-deploy run ghcr.io/svrtk/aide-svrtk/map:0.2.0 input/ output/
+CUDA_VISIBLE_DEVICES=2 monai-deploy run ghcr.io/svrtk/aide-svrtk/map:0.2.1 input/ output/
 ```
 
 ## Running on AIDE
