@@ -72,10 +72,11 @@ ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/opt/hpcx/ompi/lib"
 
 #COPY /home/auto-proc-svrtk/scripts/auto-brain-reconstruction-aide.sh /home/scripts/auto-brain-reconstruction.sh
 
-RUN mkdir -p /home/recon \
-    && mkdir -p /home/output \
-    && mkdir -p /home/scripts \
-    && chmod +x /home/scripts/* \
-    && chmod +x /home/auto-proc-svrtk/scripts/* \
+
+RUN mkdir -p /home/recon 
+RUN mkdir -p /home/output
+RUN mkdir -p /home/scripts
+RUN chmod +x /home/auto-proc-svrtk/scripts/*
+
 
 WORKDIR /var/monai
