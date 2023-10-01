@@ -3,7 +3,7 @@
 <p align="center">
 <h1 align="center">aide-svrtk</h1>
 <p align="center">
-  AI-driven, automated <a href="https://github.com/SVRTK/SVRTK">SVR reconstruction</a> packaged as an AIDE Application, based on 
+  AI-driven, <a href="https://github.com/SVRTK/auto-proc-svrtk">automated</a> version of <a href="https://github.com/SVRTK/SVRTK">SVR reconstruction</a> packaged as an AIDE Application, based on 
   the open-source <a href="https://github.com/Project-MONAI/monai-deploy/blob/main/guidelines/monai-application-package.md">
   MONAI Application Package (MAP)</a> standard.
   <br />
@@ -20,14 +20,14 @@
 
 The slice-to-volume reconstruction toolkit ([SVRTK](https://github.com/SVRTK/SVRTK)) is an image-based registration 
 framework for reconstruction of 3D volumes from multiple 2D image slices. SVRTK is used extensively for performing 
-motion-corrected reconstruction of MRI data. 
+motion-corrected reconstruction of MRI data. The [automated SVR](https://github.com/SVRTK/auto-proc-svrtk) version employs deep learning [MONAI](https://github.com/Project-MONAI/MONAI) networks for localisation and reorientation of the brain to the standard radiological space.
 
 Currently, this MAP implements SVRTK for reconstruction of 2D **fetal brain MRI** data into motion-corrected 3D volumes. 
 Further MAPs for reconstruction of other fetal organs are in development and coming soon.
 
 [AIDE](https://www.aicentre.co.uk/platforms#view1) is an open-source platform for the deployment of AI applications in 
-healthcare settings. This repo, created and led by [Tom Roberts](https://github.com/tomaroberts), packages automated 
-3D fetal brain MRI reconstruction into a [MONAI Application Package (MAP)](https://github.com/Project-MONAI/monai-deploy) 
+healthcare settings. This repo, created and led by [Tom Roberts](https://github.com/tomaroberts), packages [automated 
+3D fetal brain MRI reconstruction](https://github.com/SVRTK/auto-proc-svrtk) into a [MONAI Application Package (MAP)](https://github.com/Project-MONAI/monai-deploy) 
 for execution on AIDE, and other platforms compatible with the MAP standard.
 
 ## aide-svrtk MAP workflow
@@ -38,7 +38,7 @@ MRI DICOM Series contained the motion-corrected reconstruction.
 The aide-svrtk MAP consists of three operators:
 1. `dcm2nii_operator.py` – converts the input 2D MRI DICOM Series into NIfTI format required by SVRTK, using 
 [dcm2niix](https://github.com/rordenlab/dcm2niix)
-2. `fetal_mri_3d_brain_recon_operator.py` – runs automated fetal brain SVRTK reconstruction, in three main steps:
+2. `fetal_mri_3d_brain_recon_operator.py` – runs [automated fetal brain SVRTK reconstruction](https://github.com/SVRTK/auto-proc-svrtk), in three main steps:
    a. AI-driven brain masking 
    b. Slice-to-volume registration reconstruction
    c. AI-driven brain reorientation
