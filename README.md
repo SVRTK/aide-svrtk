@@ -98,7 +98,7 @@ The final MAP is called `map`
 
 ```shell
 # Initial packaging of MAP
-monai-deploy package app -t ghcr.io/svrtk/aide-svrtk/map-init:0.2.0 -r requirements.txt -l DEBUG
+monai-deploy package app -t ghcr.io/svrtk/aide-svrtk/map-init:0.2.1 -r requirements.txt -l DEBUG
 
 # Build 3rd-party software on top of MAP
 docker build -t ghcr.io/svrtk/aide-svrtk/map:0.2.1 app/
@@ -107,7 +107,7 @@ docker build -t ghcr.io/svrtk/aide-svrtk/map:0.2.1 app/
 monai-deploy run ghcr.io/svrtk/aide-svrtk/map:0.2.1 input/ output/
 
 # Push initial MAP and final MAP to GHCR
-docker push ghcr.io/svrtk/aide-svrtk/map-init:0.2.0
+docker push ghcr.io/svrtk/aide-svrtk/map-init:0.2.1
 docker push ghcr.io/svrtk/aide-svrtk/map:0.2.1
 ```
 
