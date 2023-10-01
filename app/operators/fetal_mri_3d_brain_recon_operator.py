@@ -44,7 +44,7 @@ class FetalMri3dBrainOperator(Operator):
 #            logging.info("SVRTK reconstruction ...")
 
             subprocess.run([
-                "/home/scripts/auto-brain-reconstruction-aide.sh",
+                "/home/auto-proc-svrtk/scripts/auto-brain-reconstruction-aide.sh",
                 nii_stacks_path,
                 operator_workdir
             ])

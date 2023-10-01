@@ -74,6 +74,7 @@ ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/opt/hpcx/ompi/lib"
 
 RUN mkdir -p /home/recon \
     && mkdir -p /home/output \
+    && mkdir -p /home/scripts \
     && chmod +x /home/scripts/* \
     && chmod +x /home/auto-proc-svrtk/scripts/* \
 
