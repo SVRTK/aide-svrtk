@@ -1,4 +1,4 @@
-FROM ghcr.io/svrtk/aide-svrtk/map-init:0.2.0 AS build
+FROM ghcr.io/svrtk/aide-svrtk/map-init:0.2.2 AS build
 
 # Add dcm2niix to MAP
 WORKDIR /bin
@@ -19,7 +19,7 @@ WORKDIR /var/monai
 
 # Add SVRTK to MAP
 
-WORKDIR /home
+WORKDIR /bin
 
 # Install general libraries
 RUN apt-get update && apt-get install --no-install-recommends --no-install-suggests -y \
@@ -37,32 +37,38 @@ RUN apt-get install -y \
 
 # Install MIRTK/SVRTK
 RUN git clone https://github.com/SVRTK/MIRTK.git \
-    && mkdir -p /home/MIRTK/Packages/SVRTK
-RUN git clone https://github.com/SVRTK/SVRTK.git /home/MIRTK/Packages/SVRTK \
-    && mkdir -p /home/MIRTK/build \
-	&& cd /home/MIRTK/build \
+    && mkdir -p /bin/MIRTK/Packages/SVRTK
+RUN git clone https://github.com/SVRTK/SVRTK.git /bin/MIRTK/Packages/SVRTK \
+    && mkdir -p /bin/MIRTK/build \
+	&& cd /bin/MIRTK/build \
 	&& cmake -D WITH_TBB="ON" -D MODULE_SVRTK="ON" .. \
 	&& make -j
 
-ENV PATH="$PATH:/home/MIRTK/build/bin:/home/MIRTK/build/lib/tools"
+ENV PATH="$PATH:/bin/MIRTK/build/bin:/bin/MIRTK/build/lib/tools"
 
 WORKDIR /var/monai
 
 
-# Add 3D UNet model weights & execution script
+# Add MONAI 3D UNet model weights & execution script
 
 WORKDIR /home
 
 # Setup 3D UNet models
-RUN git clone https://github.com/SVRTK/Segmentation_FetalMRI.git --branch svrtk-docker-gpu-0.10 --single-branch /home/Segmentation_FetalMRI
+RUN git clone https://github.com/SVRTK/auto-proc-svrtk.git /home/auto-proc-svrtk
 
-RUN wget https://gin.g-node.org/SVRTK/fetal_mri_network_weights/raw/master/checkpoints-brain-loc-2-labels/latest.ckpt -P /home/Segmentation_FetalMRI/trained-models/checkpoints-brain-loc-labels \
-    && wget https://gin.g-node.org/SVRTK/fetal_mri_network_weights/raw/master/checkpoints-brain-loc-2-labels-cropped/latest.ckpt -P /home/Segmentation_FetalMRI/trained-models/checkpoints-brain-loc-labels-cropped \
-    && wget https://gin.g-node.org/SVRTK/fetal_mri_network_weights/raw/master/checkpoints-brain-reo-5-labels/latest.ckpt -P /home/Segmentation_FetalMRI/trained-models/checkpoints-brain-reorientation \
-    && wget https://gin.g-node.org/SVRTK/fetal_mri_network_weights/raw/master/checkpoints-brain-reo-5-labels-raw-stacks/latest.ckpt -P /home/Segmentation_FetalMRI/trained-models/checkpoints-brain-reorientation-stacks
+RUN wget https://gin.g-node.org/SVRTK/fetal_mri_network_weights/raw/master/monai-checkpoints-atunet-brain_bet_all_degree_raw_stacks-1-lab/best_metric_model.pth -P /home/auto-proc-svrtk/trained_models/monai-checkpoints-atunet-brain_bet_all_degree_raw_stacks-1-lab \
+    && wget https://gin.g-node.org/SVRTK/fetal_mri_network_weights/raw/master/monai-checkpoints-unet-global-loc-2-lab/best_metric_model.pth -P /home/auto-proc-svrtk/trained_models/monai-checkpoints-unet-global-loc-2-lab \
+    && wget https://gin.g-node.org/SVRTK/fetal_mri_network_weights/raw/master/monai-checkpoints-unet-svr-brain-reo-5-lab/best_metric_model.pth -P /home/auto-proc-svrtk/trained_models/monai-checkpoints-unet-svr-brain-reo-5-lab \
+    && wget https://gin.g-node.org/SVRTK/fetal_mri_network_weights/raw/master/monai-checkpoints-unet-svr-brain-reo-raw-stacks-5-lab/best_metric_model.pth -P /home/auto-proc-svrtk/trained_models/monai-checkpoints-unet-svr-brain-reo-raw-stacks-5-lab \
+    && wget https://gin.g-node.org/SVRTK/fetal_mri_network_weights/raw/master/monai-checkpoints-unet-stack-body-reo-4-lab/best_metric_model.pth -P /home/auto-proc-svrtk/trained_models/monai-checkpoints-unet-stack-body-reo-4-lab \
+    && wget https://gin.g-node.org/SVRTK/fetal_mri_network_weights/raw/master/monai-checkpoints-unet-thorax-reo-4-lab-cmr/best_metric_model.pth -P /home/auto-proc-svrtk/trained_models/monai-checkpoints-unet-thorax-reo-4-lab-cmr 
+
+
+
+
 
 # Install Python packages
-RUN python -m pip install -r /home/Segmentation_FetalMRI/requirements.txt
+RUN python -m pip install -r /home/auto-proc-svrtk/config/requirements.txt
 
 # Bugfix: without below, cannot import torch within Python
 # Error: OSError: /opt/hpcx/ompi/lib/libmpi.so.40: undefined symbol: opal_hwloc201_hwloc_get_type_depth
@@ -70,9 +76,13 @@ RUN python -m pip install -r /home/Segmentation_FetalMRI/requirements.txt
 ENV PATH="${PATH}:/opt/hpcx/ompi/bin"
 ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/opt/hpcx/ompi/lib"
 
-COPY docker-recon-brain-auto.bash /home/scripts/docker-recon-brain-auto.bash
-RUN mkdir -p /home/recon \
-    && mkdir -p /home/output \
-    && chmod +x /home/scripts/*
+#COPY /home/auto-proc-svrtk/scripts/auto-thorax-reconstruction-aide.sh /home/scripts/auto-thorax-reconstruction.sh
+
+
+RUN mkdir -p /home/recon 
+RUN mkdir -p /home/output
+RUN mkdir -p /home/scripts
+RUN chmod +x /home/auto-proc-svrtk/scripts/*
+
 
 WORKDIR /var/monai

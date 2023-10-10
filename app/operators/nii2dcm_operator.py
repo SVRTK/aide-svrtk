@@ -55,7 +55,7 @@ class NiftiToDicomWriterOperator(Operator):
         dcm_output_path = op_output.get().path
 
         # SVRTK output
-        svrtk_output_filename = 'SVR-output.nii.gz'
+        svrtk_output_filename = 'reo-DSVR-output-thorax.nii.gz'
         svrtk_output_path = op_input.get("svrtk_output").path
         svrtk_nii_path = Path(svrtk_output_path / svrtk_output_filename)
         logging.info(f"SVRTK output NIfTI found: {svrtk_nii_path}")

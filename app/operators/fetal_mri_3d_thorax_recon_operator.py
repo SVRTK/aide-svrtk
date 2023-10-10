@@ -1,6 +1,6 @@
-# fetal_mri_3d_brain_recon_operator
+# fetal_mri_3d_thorax_recon_operator
 #
-# Perform Fetal MRI 3D Brain reconstruction
+# Perform Fetal MRI 3D Thorax reconstruction
 #
 
 import logging
@@ -15,9 +15,9 @@ from monai.deploy.core import DataPath, ExecutionContext, InputContext, IOType, 
 @md.input("nii_dataset", DataPath, IOType.DISK)
 @md.output("svrtk_output", DataPath, IOType.DISK)
 @md.env(pip_packages=["pydicom >= 2.3.0"])
-class FetalMri3dBrainOperator(Operator):
+class FetalMri3dThoraxOperator(Operator):
     """
-    Fetal MRI 3D Brain Reconstruction Operator
+    Fetal MRI 3D Thorax Reconstruction Operator
     """
 
     def compute(self, op_input: InputContext, op_output: OutputContext, context: ExecutionContext):
@@ -33,28 +33,26 @@ class FetalMri3dBrainOperator(Operator):
 
         # Run motion corrected reconstruction
         if not is_local_testing:
-            if torch.cuda.is_available():
-                cnn_mode = "1"
-                logging.info("SVRTK reconstruction using GPU mode ...")
-            if not torch.cuda.is_available():
-                cnn_mode = "-1"
-                logging.info("SVRTK reconstruction using CPU mode ...")
-
-            motion_correction_mode = "-1"  # -1 minor, 1 severe
-            logging.info("SVRTK reconstruction using Minor motion correction mode ...")
+#            if torch.cuda.is_available():
+#                cnn_mode = "1"
+#                logging.info("SVRTK reconstruction using GPU mode ...")
+#            if not torch.cuda.is_available():
+#                cnn_mode = "-1"
+#                logging.info("SVRTK reconstruction using CPU mode ...")
+#
+#            motion_correction_mode = "-1"  # -1 minor, 1 severe
+#            logging.info("SVRTK reconstruction ...")
 
             subprocess.run([
-                "/home/scripts/docker-recon-brain-auto.bash",
+                "/home/auto-proc-svrtk/scripts/auto-thorax-reconstruction-aide.sh",
                 nii_stacks_path,
-                operator_workdir,
-                cnn_mode,
-                motion_correction_mode
+                operator_workdir
             ])
 
         # Local testing:
-        # create dummy SVR-output.nii.gz file in same location as output from docker-recon-brain-auto.bash
+        # create dummy SVR-output.nii.gz file in same location as output from docker-recon-thorax-auto.bash
         if is_local_testing:
-            subprocess.run(["cp", "/path/to/local/SVR-output.nii.gz", operator_workdir])
+            subprocess.run(["cp", "/path/to/local/reo-DSVR-output-thorax.nii.gz", operator_workdir])
 
         logging.info("Completed SVRTK reconstruction ...")
 
