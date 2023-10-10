@@ -56,7 +56,7 @@ The aide-svrtk MAP consists of three operators:
 
 1. Download
 ```shell
-git clone -b  https://github.com/SVRTK/aide-svrtk.git
+git clone -b 14-monai-thorax-3d-pipeline https://github.com/SVRTK/aide-svrtk.git
 ```
 
 2. Setup virtual env
