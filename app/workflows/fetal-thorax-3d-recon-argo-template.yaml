@@ -1,9 +1,9 @@
 metadata:
-  name: fetal-brain-3d-recon-argo-template
-  generateName: fetal-brain-3d-recon-argo-template-
+  name: fetal-thorax-3d-recon-argo-template
+  generateName: fetal-thorax-3d-recon-argo-template-
 spec:
   templates:
-    - name: fetal-brain-3d-recon
+    - name: fetal-thorax-3d-recon
       inputs:
         artifacts:
           - name: input-dicom
@@ -48,5 +48,5 @@ spec:
             memory: '0'
             nvidia.com/gpu: '1'
         imagePullPolicy: IfNotPresent
-  entrypoint: fetal-brain-3d-recon
+  entrypoint: fetal-thorax-3d-recon
   arguments: {}

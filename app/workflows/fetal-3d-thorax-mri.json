@@ -1,7 +1,7 @@
 {
-  "name": "fetal-brain-mri",
+  "name": "fetal-thorax-mri",
   "version": "1.0.0",
-  "description": "Clinical Workflow for 3D fetal brain MRI reconstruction",
+  "description": "Clinical Workflow for 3D fetal thorax MRI reconstruction",
   "informatics_gateway": {
     "ae_title": "MONAI",
     "data_origins": [],
@@ -11,11 +11,11 @@
   },
   "tasks": [
     {
-      "id": "brain-3d-recon",
-      "description": "3D fetal brain MRI reconstruction",
+      "id": "thorax-3d-recon",
+      "description": "3D fetal thorax MRI reconstruction",
       "type": "argo",
       "args": {
-        "workflow_template_name": "fetal-brain-3d-recon-argo-template",
+        "workflow_template_name": "fetal-thorax-3d-recon-argo-template",
         "server_url": "http://argo-argo-workflows-server.argo:2746",
         "namespace": "argo",
         "allow_insecure": "true"
@@ -47,12 +47,12 @@
     },
     {
       "id": "clinical-review-task",
-      "description": "3D fetal brain MRI Clinical Review Task",
+      "description": "3D fetal thorax MRI Clinical Review Task",
       "type": "aide_clinical_review",
       "args": {
-        "workflow_name": "fetal-brain-mri",
-        "reviewed_task_id": "brain-3d-recon",
-        "application_name": "fetal-brain-mri",
+        "workflow_name": "fetal-thorax-mri",
+        "reviewed_task_id": "thorax-3d-recon",
+        "application_name": "fetal-thorax-mri",
         "application_version": "1.0.0",
         "mode": "QA",
         "reviewer_roles": "clinician"
@@ -82,7 +82,7 @@
     },
     {
       "id": "export-3d-dicom",
-      "description": "Export 3D fetal brain MRI DICOMs",
+      "description": "Export 3D fetal thorax MRI DICOMs",
       "type": "export",
       "args": {},
       "task_destinations": [],
@@ -95,7 +95,7 @@
         "input": [
           {
             "name": "output",
-            "value": "{{ context.executions.brain-3d-recon.artifacts.output }}",
+            "value": "{{ context.executions.thorax-3d-recon.artifacts.output }}",
             "mandatory": true
           }
         ],

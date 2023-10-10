@@ -1,4 +1,4 @@
-# AI-driven 3D fetal brain MRI reconstruction using SVRTK constructed as a MONAI Application Package (MAP)
+# AI-driven 3D fetal thorax MRI reconstruction using SVRTK constructed as a MONAI Application Package (MAP)
 #
 # Tom Roberts (tom.roberts@gstt.nhs.uk / t.roberts@kcl.ac.uk)
 #
@@ -10,18 +10,18 @@ from monai.deploy.operators.dicom_data_loader_operator import DICOMDataLoaderOpe
 from monai.deploy.operators.dicom_series_selector_operator import DICOMSeriesSelectorOperator
 
 from operators.dcm2nii_operator import Dcm2NiiOperator
-from operators.fetal_mri_3d_brain_recon_operator import FetalMri3dBrainOperator
+from operators.fetal_mri_3d_thorax_recon_operator import FetalMri3dThoraxOperator
 from operators.nii2dcm_operator import NiftiToDicomWriterOperator
 
 
 @resource(cpu=16, gpu=1, memory="32Gi")
-class FetalMri3dBrainApp(Application):
+class FetalMri3dThoraxApp(Application):
     """
-    Motion-corrected 3D fetal brain MRI Application class
+    Motion-corrected 3D fetal thorax MRI Application class
     """
 
-    name = "3d-fetal-brain-mri"
-    description = "Motion-corrected 3D fetal brain MRI application."
+    name = "3d-fetal-thorax-mri"
+    description = "Motion-corrected 3D fetal thorax MRI application."
     version = "0.2.0"
 
     def compose(self):
@@ -36,8 +36,8 @@ class FetalMri3dBrainApp(Application):
         # DICOM to NIfTI operator
         dcm2nii_op = Dcm2NiiOperator()
 
-        # Fetal Brain 3D MRI reconstruction operator
-        fetal_mri_3d_recon_op = FetalMri3dBrainOperator()
+        # Fetal Thorax 3D MRI reconstruction operator
+        fetal_mri_3d_recon_op = FetalMri3dThoraxOperator()
 
         # DICOM Writer operator
         nii2dcm_op = NiftiToDicomWriterOperator()
@@ -68,4 +68,4 @@ Rules_Text = """
 """
 
 if __name__ == "__main__":
-    FetalMri3dBrainApp(do_run=True)
+    FetalMri3dThoraxApp(do_run=True)

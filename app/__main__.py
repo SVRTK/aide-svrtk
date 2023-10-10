@@ -1,4 +1,4 @@
-from app import FetalMri3dBrainApp
+from app import FetalMri3dThoraxApp
 
 if __name__ == "__main__":
-    FetalMri3dBrainApp(do_run=True)
+    FetalMri3dThoraxApp(do_run=True)
