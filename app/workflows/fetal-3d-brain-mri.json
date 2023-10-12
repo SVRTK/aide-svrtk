@@ -1,9 +1,9 @@
 {
   "name": "fetal-brain-mri",
-  "version": "1.0.0",
+  "version": "0.2.1",
   "description": "Clinical Workflow for 3D fetal brain MRI reconstruction",
   "informatics_gateway": {
-    "ae_title": "MONAI",
+    "ae_title": "AIDE_QA",
     "data_origins": [],
     "export_destinations": [
       "PACS"
@@ -53,8 +53,8 @@
         "workflow_name": "fetal-brain-mri",
         "reviewed_task_id": "brain-3d-recon",
         "application_name": "fetal-brain-mri",
-        "application_version": "1.0.0",
-        "mode": "QA",
+        "application_version": "0.2.1",
+        "mode": "AIDE_QA",
         "reviewer_roles": "clinician"
       },
       "task_destinations": [
